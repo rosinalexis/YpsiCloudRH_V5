@@ -1,0 +1,11 @@
+api_platform:
+  title: "YPSI CLOUD RH REST API"
+  description: "A Symfony API to manage YPSI CLOUD RH app."
+  version: "0.0.5"
+  show_webby: false
+  mapping:
+    paths: ["%kernel.project_dir%/src/Entity"]
+  patch_formats:
+    json: ["application/merge-patch+json"]
+  swagger:
+    versions: [3]
