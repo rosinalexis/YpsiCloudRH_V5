@@ -2,16 +2,37 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints\Email;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="users")
  */
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:user:collection']],
+    denormalizationContext: ['groups' => ['write:user:collection']],
+    collectionOperations: [
+        'get',
+        'post'
+    ],
+    itemOperations: [
+        'put',
+        'delete',
+        'get' => [
+            'normalization_context' => ['groups' => ['read:user:collection', 'read:user:item']]
+        ]
+    ]
+
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -19,16 +40,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['read:user:collection'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
+    #[
+        Groups(['read:user:collection', 'write:user:collection']),
+        Email()
+    ]
     private $email;
 
     /**
      * @ORM\Column(type="json")
      */
+    #[
+        Groups(['read:user:item']),
+    ]
     private $roles = [];
 
     /**
@@ -37,19 +66,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $password;
 
+    #[Groups(['write:user:collection']), SerializedName("password")]
+    private $plainPassword;
+
     /**
      * @ORM\Column(type="boolean")
      */
+    #[Groups(['read:user:item', 'write:user:collection'])]
     private $isActivated;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      */
+    #[Groups(['read:user:item'])]
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      */
+    #[Groups(['read:user:item'])]
     private $updatedAt;
 
     public function getId(): ?int
@@ -138,7 +173,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getIsActivated(): ?bool
@@ -188,5 +223,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->setUpdatedAt(new \DateTimeImmutable);
+    }
+
+    /**
+     * Get the value of plainPassword
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @return  self
+     */
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
     }
 }
