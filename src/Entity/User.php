@@ -9,8 +9,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-use Symfony\Component\Validator\Constraints\Email;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -22,14 +21,21 @@ use Symfony\Component\Validator\Constraints\Email;
     denormalizationContext: ['groups' => ['write:user:collection']],
     collectionOperations: [
         'get',
-        'post'
+        'post' => [
+            "security" => "is_granted('ROLE_ADMIN')",
+            "security_message" => "Only admins can add user.",
+        ]
     ],
     itemOperations: [
-        'put',
+        'put' => [
+            "security" => "is_granted('ROLE_ADMIN') ",
+            "security_message" => "Only admins can edit user.",
+        ],
         'delete',
         'get' => [
             'normalization_context' => ['groups' => ['read:user:collection', 'read:user:item']]
-        ]
+        ],
+
     ]
 
 )]
@@ -48,7 +54,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[
         Groups(['read:user:collection', 'write:user:collection']),
-        Email()
+        Assert\Email(),
+        Assert\NotBlank()
     ]
     private $email;
 
@@ -56,7 +63,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="json")
      */
     #[
-        Groups(['read:user:item']),
+        Groups(['read:user:item', 'write:user:collection']),
+        Assert\NotBlank()
     ]
     private $roles = [];
 
@@ -66,13 +74,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $password;
 
-    #[Groups(['write:user:collection']), SerializedName("password")]
+    #[Groups(['write:user:collection']), SerializedName("password"), Assert\NotBlank()]
     private $plainPassword;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    #[Groups(['read:user:item', 'write:user:collection'])]
+    #[Groups(['read:user:item', 'write:user:collection']), Assert\NotBlank()]
     private $isActivated;
 
     /**
@@ -128,8 +136,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // // guarantee every user at least has ROLE_USER
+        // $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }

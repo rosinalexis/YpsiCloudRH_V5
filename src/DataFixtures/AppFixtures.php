@@ -27,11 +27,19 @@ class AppFixtures extends Fixture
         for ($i = 1; $i < 100; $i++) {
             $user  = new User;
             $user->setEmail($this->faker->email())
+                ->setRoles(['ROLE_USER'])
                 ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
                 ->setIsActivated(true);
-
             $manager->persist($user);
             $manager->flush();
         }
+
+        $user  = new User;
+        $user->setEmail('admin@admin.fr')
+            ->setRoles(['ROLE_ADMIN'])
+            ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
+            ->setIsActivated(true);
+        $manager->persist($user);
+        $manager->flush();
     }
 }
