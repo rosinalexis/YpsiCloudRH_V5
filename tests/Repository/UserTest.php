@@ -28,7 +28,7 @@ class UserTest extends KernelTestCase
     {
         // récuperation des utilisateurs
         $users = static::getContainer()->get(UserRepository::class)->count([]);
-        $this->assertEquals(1, $users);
+        $this->assertEquals(3, $users);
     }
 
     public function testUserAdd(): void

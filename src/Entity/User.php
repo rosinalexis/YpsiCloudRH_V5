@@ -51,9 +51,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * 
      */
     #[
-        Groups(['read:user:collection', 'write:user:collection']),
+        Groups([
+            'read:user:collection',
+            'write:user:collection'
+        ]),
         Assert\Email(),
         Assert\NotBlank()
     ]
@@ -63,8 +67,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="json")
      */
     #[
-        Groups(['read:user:item', 'write:user:collection']),
-        Assert\NotBlank()
+        Groups([
+            'read:user:item',
+            'write:user:collection'
+        ]),
+        Assert\NotBlank(),
+        Assert\Choice([["ROLE_USER"], ["ROLE_ADMIN"]])
     ]
     private $roles = [];
 
@@ -74,13 +82,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $password;
 
-    #[Groups(['write:user:collection']), SerializedName("password"), Assert\NotBlank()]
+    #[
+        Groups(['write:user:collection']),
+        SerializedName("password"),
+        Assert\NotBlank(),
+        Assert\Length(min: 5)
+    ]
     private $plainPassword;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    #[Groups(['read:user:item', 'write:user:collection']), Assert\NotBlank()]
+    #[
+        Groups([
+            'read:user:item',
+            'write:user:collection'
+        ]),
+        Assert\NotBlank(),
+    ]
     private $isActivated;
 
     /**

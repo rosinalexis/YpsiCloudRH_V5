@@ -24,7 +24,7 @@ class AppFixtures extends Fixture
 
     public function laodUser(ObjectManager $manager): void
     {
-        for ($i = 1; $i < 100; $i++) {
+        for ($i = 1; $i < 3; $i++) {
             $user  = new User;
             $user->setEmail($this->faker->email())
                 ->setRoles(['ROLE_USER'])

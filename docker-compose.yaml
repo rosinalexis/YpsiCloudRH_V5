@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: ypsi_cloud_rh_v5
     ports:
-      - "3306"
+      - 60561:3306
     networks:
       - dev
 
