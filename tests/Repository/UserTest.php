@@ -24,14 +24,14 @@ class UserTest extends KernelTestCase
             ->getManager();
     }
 
-    public function testUserCount(): void
+    public function testUserRepositoryCount(): void
     {
         // récuperation des utilisateurs
         $users = static::getContainer()->get(UserRepository::class)->count([]);
-        $this->assertEquals(3, $users);
+        $this->assertEquals(4, $users);
     }
 
-    public function testUserAdd(): void
+    public function testUserRepositoryAdd(): void
     {
         //insertion de l'utilisateur
         $userTest = new User;

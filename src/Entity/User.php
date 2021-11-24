@@ -22,12 +22,14 @@ use Symfony\Component\Validator\Constraints as Assert;
     collectionOperations: [
         'get',
         'post' => [
+            'denormalization_context' => ['groups' => ['write:user:collection']],
             "security" => "is_granted('ROLE_ADMIN')",
             "security_message" => "Only admins can add user.",
         ]
     ],
     itemOperations: [
         'put' => [
+            'denormalization_context' => ['groups' => ['write:user:put']],
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can edit user.",
         ],
@@ -85,8 +87,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[
         Groups(['write:user:collection']),
         SerializedName("password"),
-        Assert\NotBlank(),
-        Assert\Length(min: 5)
+        Assert\Length(min: 5),
+        Assert\NotBlank()
     ]
     private $plainPassword;
 
@@ -96,7 +98,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[
         Groups([
             'read:user:item',
-            'write:user:collection'
+            'write:user:collection',
+            'write:user:put'
         ]),
         Assert\NotBlank(),
     ]

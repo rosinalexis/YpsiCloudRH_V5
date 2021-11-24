@@ -50,6 +50,7 @@
         "dama/doctrine-test-bundle": "^6.7",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "fakerphp/faker": "^1.16",
+        "justinrainbow/json-schema": "^5.2",
         "liip/test-fixtures-bundle": "2.0.0",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "5.3.*",
