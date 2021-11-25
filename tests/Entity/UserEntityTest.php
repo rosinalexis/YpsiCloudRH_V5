@@ -54,18 +54,12 @@ class UserEntityTest extends KernelTestCase
     public function testUserEntityPasswordIsBlank(): void
     {
         $user = $this->getEntity()->setPlainPassword('');
-        $this->getValidationErrors($user, 2);
+        $this->getValidationErrors($user, 1);
     }
 
     public function testUserEntityPasswordIsInvalid(): void
     {
         $user = $this->getEntity()->setPlainPassword('123');
-        $this->getValidationErrors($user, 1);
-    }
-
-    public function testUserEntityActivationIsBlank(): void
-    {
-        $user = $this->getEntity()->setIsActivated('');
         $this->getValidationErrors($user, 1);
     }
 

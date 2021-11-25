@@ -31,10 +31,10 @@ class UserApiTest extends ApiTestCase
                 'headers' => [
                     'Content-Type' => 'application/json'
                 ],
-                'json' => $body ?: [
+                'json' => ($body ?: [
                     'username' => 'admin@admin.fr',
                     'password' => '123456',
-                ]
+                ])
             ]
         );
 
@@ -93,25 +93,24 @@ class UserApiTest extends ApiTestCase
         $this->assertMatchesResourceItemJsonSchema(User::class);
     }
 
-    // public function testUserApiUpdateItem(): void
-    // {
-    //     $uri = $this->findIriBy(User::class, ['email' => 'testman@test.fr']);
-    //     // $response = $this->sendRequest('PUT', $uri, ['isActivated' => false]);
-    //     $response = $this->client->request('PUT', $uri, [
-    //         'headers' => [
-    //             'Content-Type' => 'application/ld+json'
-    //         ],
-    //         'auth_bearer' => $this->token,
-    //         'json' => [
-    //             'isActivated' => false
-    //         ]
-    //     ]);
+    public function testUserApiUpdateItem(): void
+    {
+        $uri = $this->findIriBy(User::class, ['email' => 'testman@test.fr']);
+        // $response = $this->sendRequest('PUT', $uri, ['isActivated' => false]);
+        $response = $this->client->request('PUT', $uri, [
+            'headers' => [
+                'Content-Type' => 'application/ld+json'
+            ],
+            'auth_bearer' => $this->token,
+            'json' => [
+                'isActivated' => false
+            ]
+        ]);
 
-    //     $this->assertResponseIsSuccessful();
-    //     $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-    //     $this->assertArrayHasKey('email', $response->toArray());
-    //     $this->assertTrue($response->toArray()['email'] == "user@test.fr");
-    // }
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertArrayHasKey('email', $response->toArray());
+    }
 
     public function testUserApiDeleteItem(): void
     {
@@ -119,17 +118,78 @@ class UserApiTest extends ApiTestCase
         $response = $this->sendRequest("DELETE", $uri);
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
 
+
         $this->assertNull(
             static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'testman@test.fr'])
         );
     }
 
+    public function testSimpleUserDeleteItem(): void
+    {
+
+        $response = $this->client->request(
+            'POST',
+            '/authentication_token',
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => [
+                    'username' => 'testman@test.fr',
+                    'password' => '123456',
+                ]
+            ]
+        );
+
+        $token = $response->toArray()['token'];
+
+        $uri = $this->findIriBy(User::class, ['email' => 'admin@admin.fr']);
+        $response = static::createClient()->request('DELETE', $uri,  ['auth_bearer' => $token]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testSimpleUserUpdateItem(): void
+    {
+        $response = $this->client->request(
+            'POST',
+            '/authentication_token',
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => [
+                    'username' => 'testman@test.fr',
+                    'password' => '123456',
+                ]
+            ]
+        );
+
+        $token = $response->toArray()['token'];
+
+        $uri = $this->findIriBy(User::class, ['email' => 'admin@admin.fr']);
+        $response = static::createClient()->request('PUT', $uri,  [
+            'headers' => [
+                'Content-Type' => 'application/ld+json'
+            ],
+            'auth_bearer' => $token,
+            'json' => [
+                'isActivated' => false
+            ]
+        ]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
 
     private function sendRequest(string $method, string $uri = null, $data = [])
     {
         $uri ? $uri : ($uri = '/api/users');
 
-        $response = $this->client->request($method, $uri, ['headers' => ['Content-Type' => 'application/json'], 'auth_bearer' => $this->token, 'json' => $data ? $data : []]);
+        $response = $this->client->request($method, $uri, [
+            'headers' => [
+                'Content-Type' => 'application/json'
+            ],
+            'auth_bearer' => $this->token,
+            'json' => ($data ? $data : [])
+        ]);
 
         return $response;
     }

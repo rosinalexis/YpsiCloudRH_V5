@@ -18,11 +18,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource(
     normalizationContext: ['groups' => ['read:user:collection']],
-    denormalizationContext: ['groups' => ['write:user:collection']],
+    //denormalizationContext: ['groups' => ['write:user:collection']],
     collectionOperations: [
         'get',
         'post' => [
             'denormalization_context' => ['groups' => ['write:user:collection']],
+            "validation_groups" => ['Default', 'write:user:collection'],
             "security" => "is_granted('ROLE_ADMIN')",
             "security_message" => "Only admins can add user.",
         ]
@@ -33,7 +34,10 @@ use Symfony\Component\Validator\Constraints as Assert;
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can edit user.",
         ],
-        'delete',
+        'delete' => [
+            "security" => "is_granted('ROLE_ADMIN') ",
+            "security_message" => "Only admins can edit user.",
+        ],
         'get' => [
             'normalization_context' => ['groups' => ['read:user:collection', 'read:user:item']]
         ],
@@ -87,8 +91,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[
         Groups(['write:user:collection']),
         SerializedName("password"),
+        Assert\NotBlank(groups: ['write:user:collection']),
         Assert\Length(min: 5),
-        Assert\NotBlank()
     ]
     private $plainPassword;
 
@@ -99,9 +103,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Groups([
             'read:user:item',
             'write:user:collection',
-            'write:user:put'
+            'write:user:put',
+            'read:user:collection'
         ]),
-        Assert\NotBlank(),
+        Assert\Type('bool')
     ]
     private $isActivated;
 
