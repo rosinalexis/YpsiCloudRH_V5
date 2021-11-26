@@ -53,7 +53,7 @@ class UserApiTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
 
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-        $this->assertCount(4, $response->toArray()['hydra:member']);
+        $this->assertCount(5, $response->toArray()['hydra:member']);
         $this->assertMatchesResourceCollectionJsonSchema(User::class);
     }
 

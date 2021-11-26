@@ -64,8 +64,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'read:user:collection',
             'write:user:collection'
         ]),
-        Assert\Email(),
-        Assert\NotBlank()
+        Assert\Email,
+        Assert\NotBlank
     ]
     private $email;
 
@@ -77,7 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'read:user:item',
             'write:user:collection'
         ]),
-        Assert\NotBlank(),
+        Assert\NotBlank,
         Assert\Choice([["ROLE_USER"], ["ROLE_ADMIN"]])
     ]
     private $roles = [];
@@ -121,6 +121,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[Groups(['read:user:item'])]
     private $updatedAt;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Profile::class, cascade={"persist", "remove"})
+     */
+    #[Groups(['read:user:item'])]
+    private $profile;
 
     public function getId(): ?int
     {
@@ -276,6 +282,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getProfile(): ?Profile
+    {
+        return $this->profile;
+    }
+
+    public function setProfile(?Profile $profile): self
+    {
+        $this->profile = $profile;
 
         return $this;
     }

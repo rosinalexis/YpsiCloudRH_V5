@@ -1,0 +1,290 @@
+<?php
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProfileRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * @ORM\Entity(repositoryClass=ProfileRepository::class)
+ * @ORM\HasLifecycleCallbacks()
+ * @ORM\Table(name="profiles")
+ */
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:profile:collection']],
+    collectionOperations: [
+        'post' => [
+            'denormalization_context' => ['groups' => ['write:profile:collection']],
+            "validation_groups" => ['Default', 'write:user:collection'],
+            "security" => "is_granted('ROLE_ADMIN')",
+            "security_message" => "Only admins can add user.",
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'normalization_context' => ['groups' => ['read:profile:collection', 'read:profile:item']]
+        ],
+        'put' => [
+            'denormalization_context' => ['groups' => ['write:profile:put']],
+            "security" => "is_granted('ROLE_ADMIN') or object.owner == user",
+            "security_message" => "You must be an admins or user owner for edit this profile."
+        ],
+        'delete' => [
+            "security" => "is_granted('ROLE_ADMIN') ",
+            "security_message" => "Only admins can delete users profiles.",
+        ],
+    ]
+)]
+class Profile
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    #[
+        Groups([
+            'read:profile:collection',
+            'read:user:item'
+        ]),
+    ]
+    private $id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    #[
+        Groups([
+            'read:profile:collection',
+            'write:profile:collection',
+            'read:user:item'
+        ]),
+        Assert\Length(min: 5, max: 255),
+        Assert\NotBlank()
+    ]
+    private $lastname;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    #[
+        Groups([
+            'read:profile:collection', 'write:profile:collection',
+            'read:user:item'
+        ]),
+        Assert\Length(min: 5, max: 255),
+        Assert\NotBlank(),
+    ]
+    private $firstname;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    #[
+        Groups([
+            'read:profile:item',
+            'write:profile:collection'
+        ]),
+        Assert\Choice(['Monsieur', 'Madame', 'Mademoiselle']),
+        Assert\NotBlank()
+    ]
+    private $gender;
+
+    /**
+     * @ORM\Column(type="string", length=30)
+     */
+    #[
+        Groups([
+            'read:profile:item',
+            'write:profile:collection',
+            'write:profile:put',
+        ]),
+        Assert\Length(min: 10, max: 20),
+        Assert\NotBlank()
+
+    ]
+    // Assert\Regex(pattern: '^[0-9\-\(\)\/\+\s]*$')
+    private $phone;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    #[
+        Groups([
+            'read:profile:item',
+            'write:profile:collection',
+            'write:profile:put'
+        ]),
+        Assert\Length(min: 8, max: 255),
+        Assert\NotBlank()
+    ]
+    private $address;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    #[
+        Groups([
+            'read:profile:item',
+            'write:profile:collection'
+        ]),
+        Assert\NotBlank(),
+        Assert\Type("DateTimeImmutable")
+    ]
+    private $birthdate;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    #[
+        Groups([
+            'read:profile:item',
+            'write:profile:collection',
+            'write:profile:put'
+        ]),
+        Assert\Length(max: 255, maxMessage: "Max description value."),
+
+    ]
+    private $description;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    #[Groups(['read:profile:collection'])]
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    #[Groups(['read:profile:item'])]
+    private $updatedAt;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): self
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): self
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getBirthdate(): ?\DateTimeImmutable
+    {
+        return $this->birthdate;
+    }
+
+    public function setBirthdate(\DateTimeImmutable $birthdate): self
+    {
+        $this->birthdate = $birthdate;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps()
+    {
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt(new \DateTimeImmutable);
+        }
+
+        $this->setUpdatedAt(new \DateTimeImmutable);
+    }
+}
