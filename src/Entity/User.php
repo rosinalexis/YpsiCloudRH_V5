@@ -47,6 +47,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const ROLE_USER = ["ROLE_USER"];
+    const ROLE_ADMIN = ["ROLE_ADMIN"];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -78,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'write:user:collection'
         ]),
         Assert\NotBlank,
-        Assert\Choice([["ROLE_USER"], ["ROLE_ADMIN"]])
+        Assert\Choice([self::ROLE_USER, self::ROLE_ADMIN])
     ]
     private $roles = [];
 
@@ -123,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $updatedAt;
 
     /**
-     * @ORM\OneToOne(targetEntity=Profile::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Profile::class, inversedBy="user", cascade={"persist", "remove"})
      */
     #[Groups(['read:user:item'])]
     private $profile;

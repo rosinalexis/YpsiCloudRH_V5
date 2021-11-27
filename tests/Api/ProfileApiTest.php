@@ -98,7 +98,7 @@ class ProfileApiTest extends ApiTestCase
     public function testProfileApiUpdateItem(): void
     {
         //création et enregistrement d'un nouveau profile 
-        $this->createNewProfile();
+        $testProfile = $this->createNewProfile();
 
         //récupération du profile
         $uri = $this->findIriBy(Profile::class, ['lastname' => 'lastnameTest']);
@@ -109,13 +109,13 @@ class ProfileApiTest extends ApiTestCase
             ],
             'auth_bearer' => $this->token,
             'json' => [
-                'firstname' => 'firstnameUpdate'
+                'description' => 'Update description.'
             ]
         ]);
 
-        var_dump($response->toArray());
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSame('update description.', $response->toArray()['description']);
     }
 
 

@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 3; $i++) {
             $user  = new User;
             $user->setEmail($this->faker->email())
-                ->setRoles(['ROLE_USER'])
+                ->setRoles(USER::ROLE_USER)
                 ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
                 ->setIsActivated(true)
                 ->setProfile($this->getReference("profile$i"));
@@ -39,7 +39,7 @@ class AppFixtures extends Fixture
 
         $user  = new User;
         $user->setEmail('admin@admin.fr')
-            ->setRoles(['ROLE_ADMIN'])
+            ->setRoles(USER::ROLE_ADMIN)
             ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
             ->setIsActivated(true);
         $manager->persist($user);
@@ -60,7 +60,7 @@ class AppFixtures extends Fixture
             $profile = new Profile;
             $profile->setFirstname($this->faker->firstName())
                 ->setLastname($this->faker->lastName())
-                ->setGender($this->faker->randomElement(['Monsieur', 'Madame']))
+                ->setGender($this->faker->randomElement([PROFILE::GENDER_MALE, PROFILE::GENDER_FEMALE, PROFILE::GENDER_GIRL]))
                 ->setAddress($this->faker->address())
                 ->setPhone($this->faker->phoneNumber())
                 ->setBirthdate(new \DateTimeImmutable())

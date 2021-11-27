@@ -16,6 +16,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     public function __construct(
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher
+
     ) {
         $this->_em = $em;
         $this->_passwordHasher = $passwordHasher;

@@ -16,7 +16,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'post' => [
-            'denormalization_context' => ['groups' => ['write:profile:collection']],
+            'denormalization_context' => [
+                'groups' => ['write:profile:collection'],
+                'normalization_context' => ['groups' => ['read:profile:collection', 'read:profile:item']]
+            ],
         ]
     ],
     itemOperations: [
@@ -36,6 +39,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Profile
 {
+    const GENDER_MALE = "monsieur";
+    const GENDER_FEMALE = "madame";
+    const GENDER_GIRL = "mademoiselle";
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -84,7 +90,7 @@ class Profile
             'read:profile:item',
             'write:profile:collection'
         ]),
-        Assert\Choice(['monsieur', 'madame', 'mademoiselle']),
+        Assert\Choice([self::GENDER_MALE, self::GENDER_FEMALE, self::GENDER_GIRL]),
         Assert\NotBlank()
     ]
     private $gender;
@@ -156,6 +162,12 @@ class Profile
      */
     #[Groups(['read:profile:item'])]
     private $updatedAt;
+
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="profile")
+     */
+    #[Groups(['read:profile:item'])]
+    private $user;
 
     public function getId(): ?int
     {
@@ -281,5 +293,27 @@ class Profile
         }
 
         $this->setUpdatedAt(new \DateTimeImmutable);
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($user === null && $this->user !== null) {
+            $this->user->setProfile(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($user !== null && $user->getProfile() !== $this) {
+            $user->setProfile($this);
+        }
+
+        $this->user = $user;
+
+        return $this;
     }
 }
