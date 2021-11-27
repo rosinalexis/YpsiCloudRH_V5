@@ -61,6 +61,7 @@ class Profile
     #[
         Groups([
             'read:profile:collection',
+            'read:user:collection',
             'write:profile:collection',
             'read:user:item'
         ]),
@@ -75,7 +76,7 @@ class Profile
     #[
         Groups([
             'read:profile:collection', 'write:profile:collection',
-            'read:user:item'
+            'read:user:collection'
         ]),
         Assert\Length(min: 5, max: 255),
         Assert\NotBlank(),
@@ -88,6 +89,7 @@ class Profile
     #[
         Groups([
             'read:profile:item',
+            'read:user:collection',
             'write:profile:collection'
         ]),
         Assert\Choice([self::GENDER_MALE, self::GENDER_FEMALE, self::GENDER_GIRL]),
