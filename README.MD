@@ -28,14 +28,14 @@ docker-compose up -d
 symfony serve -d
 ```
 
-### Connexion à la base de données
+### Connexion à la base de données docker
 
 ```bash
 docker exec -it ypsicloudrh_database_5 mysql -u root -p
 docker exec -it ypsicloudrh_database_5 bash
 ```
 
-### Supprimer l'environnement de développement
+### Supprimer l'environnement de développement docker
 
 docker-compose stop pour stop les conteneurs.
 docker-compose down pour stopper et la desctrucion du conteneur.
@@ -46,10 +46,22 @@ docker-compose down
 ```
 
 ### Lancer les tests 
+
+**étape 1 : Lancer les fixtures sur le serveur de test
+```bash
+symfony console doctrine:fixture:load --env=test
+```
+
+**étape 2: Lancer tous les tests .
 ```bash
 php bin\phpunit --testdox
 ```
 
+**étape 3 : lancer un test en particulié
+```bash
+php bin\phpunit <le fichier test> --testdox
+```
+exemple de fichier test : "tests\Entity\UserEnityTest.php"
 
 #### Lancer des commandes dans l'environnement de test
 
@@ -62,3 +74,5 @@ php bin\console --env=test + la commande
 ```bash
 composer require --dev dama/doctrine-test-bundle
 ```
+voir la doc pour plus d'information car il faut ajout des lignes en xml dan sle fichier phpunit.xml.dist
+

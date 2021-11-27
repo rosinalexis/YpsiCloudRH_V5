@@ -14,13 +14,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="profiles")
  */
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:profile:collection']],
     collectionOperations: [
         'post' => [
             'denormalization_context' => ['groups' => ['write:profile:collection']],
-            "validation_groups" => ['Default', 'write:user:collection'],
-            "security" => "is_granted('ROLE_ADMIN')",
-            "security_message" => "Only admins can add user.",
         ]
     ],
     itemOperations: [
@@ -29,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ],
         'put' => [
             'denormalization_context' => ['groups' => ['write:profile:put']],
-            "security" => "is_granted('ROLE_ADMIN') or object.owner == user",
+            "security" => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()",
             "security_message" => "You must be an admins or user owner for edit this profile."
         ],
         'delete' => [
@@ -88,7 +84,7 @@ class Profile
             'read:profile:item',
             'write:profile:collection'
         ]),
-        Assert\Choice(['Monsieur', 'Madame', 'Mademoiselle']),
+        Assert\Choice(['monsieur', 'madame', 'mademoiselle']),
         Assert\NotBlank()
     ]
     private $gender;
@@ -146,7 +142,6 @@ class Profile
             'write:profile:put'
         ]),
         Assert\Length(max: 255, maxMessage: "Max description value."),
-
     ]
     private $description;
 
@@ -174,7 +169,7 @@ class Profile
 
     public function setLastname(string $lastname): self
     {
-        $this->lastname = $lastname;
+        $this->lastname = strtolower($lastname);
 
         return $this;
     }
@@ -186,7 +181,7 @@ class Profile
 
     public function setFirstname(string $firstname): self
     {
-        $this->firstname = $firstname;
+        $this->firstname = strtolower($firstname);
 
         return $this;
     }
@@ -198,7 +193,7 @@ class Profile
 
     public function setGender(string $gender): self
     {
-        $this->gender = $gender;
+        $this->gender = strtolower($gender);
 
         return $this;
     }
@@ -222,7 +217,7 @@ class Profile
 
     public function setAddress(string $address): self
     {
-        $this->address = $address;
+        $this->address = strtolower($address);
 
         return $this;
     }
@@ -246,7 +241,7 @@ class Profile
 
     public function setDescription(?string $description): self
     {
-        $this->description = $description;
+        $this->description = strtolower($description);
 
         return $this;
     }

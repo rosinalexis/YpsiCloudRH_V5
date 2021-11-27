@@ -122,8 +122,8 @@ class ProfileEntityTest extends KernelTestCase
         $profile = new Profile();
         $profile->setFirstname("testfirstname")
             ->setLastname("testlastname")
-            ->setGender("Monsieur")
-            ->setAddress("2 rue de Test le Jean Moulin")
+            ->setGender("monsieur")
+            ->setAddress("2 rue de test le jean moulin")
             ->setPhone("0224563429")
             ->setBirthdate(new \DateTimeImmutable())
             ->setDescription("description de test")
