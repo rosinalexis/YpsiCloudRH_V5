@@ -32,7 +32,10 @@ security:
       pattern: ^/api
       stateless: true
       provider: app_user_provider
-      jwt: ~
+      # jwt: ~
+      guard:
+        authenticators:
+          - App\Security\TokenAuthenticator
 
     # main:
     #   user_checker: App\Security\UserLoginChecker

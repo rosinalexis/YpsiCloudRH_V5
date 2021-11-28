@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Controller\ResetPasswordAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
@@ -35,12 +37,24 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can edit user.",
         ],
+        'put-reset-password' => [
+            "security" => "is_granted('IS_AUTHENTICATED_FULLY') and object == user",
+            "security_message" => "Only Object Owner can reset password.",
+            "method" => "PUT",
+            "path" => "users/{id}/reset-password",
+            "controller" => ResetPasswordAction::class,
+            "denormalization_context" => [
+                "groups" => ["put:reset:password"]
+            ]
+        ],
         'delete' => [
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can edit user.",
         ],
         'get' => [
-            'normalization_context' => ['groups' => ['read:user:collection', 'read:user:item']]
+            'normalization_context' => [
+                'groups' => ['read:user:collection', 'read:user:item']
+            ]
         ],
 
     ]
@@ -131,6 +145,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[Groups(['read:user:collection'])]
     private $profile;
+
+
+    #[
+        Groups(["put:reset:password"]),
+        Assert\NotBlank(),
+        Assert\Length(min: 5),
+    ]
+    private $newPassword;
+
+    #[
+        Groups(["put:reset:password"]),
+        Assert\NotBlank(),
+        Assert\Length(min: 5),
+        Assert\Expression("this.getNewPassword() === this.getNewRetypedPassword()", message: "Password does not match.")
+    ]
+    private $newRetypedPassword;
+
+    #[
+        Groups(["put:reset:password"]),
+        Assert\NotBlank(),
+        UserPassword()
+    ]
+    private $oldPassword;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $passwordChangeDate;
+
 
     public function getId(): ?int
     {
@@ -298,6 +341,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfile(?Profile $profile): self
     {
         $this->profile = $profile;
+
+        return $this;
+    }
+
+    public function getNewPassword(): ?string
+    {
+        return $this->newPassword;
+    }
+
+    public function setNewPassword(string $newPassword): self
+    {
+        $this->newPassword = $newPassword;
+
+        return $this;
+    }
+
+    public function getNewRetypedPassword(): ?string
+    {
+        return $this->newRetypedPassword;
+    }
+
+    public function setNewRetypedPassword(string $newRetypedPassword): self
+    {
+        $this->newRetypedPassword = $newRetypedPassword;
+
+        return $this;
+    }
+
+    public function getOldPassword(): ?string
+    {
+        return $this->oldPassword;
+    }
+
+    public function setOldPassword(string $oldPassword): self
+    {
+        $this->oldPassword = $oldPassword;
+
+        return $this;
+    }
+
+    public function getPasswordChangeDate(): ?int
+    {
+        return $this->passwordChangeDate;
+    }
+
+    public function setPasswordChangeDate(?int $passwordChangeDate): self
+    {
+        $this->passwordChangeDate = $passwordChangeDate;
 
         return $this;
     }
