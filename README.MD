@@ -74,5 +74,5 @@ php bin\console --env=test + la commande
 ```bash
 composer require --dev dama/doctrine-test-bundle
 ```
-voir la doc pour plus d'information car il faut ajout des lignes en xml dan sle fichier phpunit.xml.dist
+voir la doc pour plus d'information car il faut ajouter des lignes en xml dans le fichier phpunit.xml.dist
 
