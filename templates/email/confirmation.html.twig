@@ -1,0 +1,7 @@
+<h1>Bienvenu sur Ypsi Cloud RH!</h1>
+
+<p>
+	Merci de confirmer votre adresse mail.<br>
+	En cliquant sur le lien suivant:
+	<a href="{{ url("default_confirm_token", {'token':user.getConfirmationToken()})}}">ici</a>
+</p>

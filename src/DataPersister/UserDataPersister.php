@@ -4,6 +4,7 @@ namespace App\DataPersister;
 
 use App\Entity\User;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Email\Mailer;
 use App\Security\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -14,16 +15,19 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     private $_em;
     private $_passwordHasher;
     private $_tokeGenerator;
+    private $_mailer;
 
     public function __construct(
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher,
-        TokenGenerator $tokenGenerator
+        TokenGenerator $tokenGenerator,
+        Mailer $mailer
 
     ) {
         $this->_em = $em;
         $this->_passwordHasher = $passwordHasher;
         $this->_tokeGenerator = $tokenGenerator;
+        $this->_mailer = $mailer;
     }
 
 
@@ -56,6 +60,8 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
             $data->setConfirmationToken(
                 $this->_tokeGenerator->getRandomeSecureToken()
             );
+
+            $this->_mailer->sendConfirmationEmail($data);
         }
 
         //enregistrement des données 
