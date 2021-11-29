@@ -120,13 +120,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[
         Groups([
             'read:user:item',
-            'write:user:collection',
             'write:user:put',
             'read:user:collection'
         ]),
         Assert\Type('bool')
     ]
     private $isActivated;
+
+
+    /**
+     *@ORM\Column(type="string", length=40, nullable=true)
+     */
+    private $confirmationToken;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -149,23 +154,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[
         Groups(["put:reset:password"]),
-        Assert\NotBlank(),
-        Assert\Length(min: 5),
+        Assert\NotBlank(groups: ["put:reset:password"]),
+        Assert\Length(min: 5, groups: ["put:reset:password"]),
     ]
     private $newPassword;
 
     #[
         Groups(["put:reset:password"]),
-        Assert\NotBlank(),
-        Assert\Length(min: 5),
+        Assert\NotBlank(groups: ["put:reset:password"]),
+        Assert\Length(min: 5, groups: ["put:reset:password"]),
         Assert\Expression("this.getNewPassword() === this.getNewRetypedPassword()", message: "Password does not match.")
     ]
     private $newRetypedPassword;
 
     #[
         Groups(["put:reset:password"]),
-        Assert\NotBlank(),
-        UserPassword()
+        Assert\NotBlank(groups: ["put:reset:password"]),
+        UserPassword(groups: ["put:reset:password"])
     ]
     private $oldPassword;
 
@@ -174,6 +179,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $passwordChangeDate;
 
+
+    public function __construct()
+    {
+        $this->confirmationToken = null;
+    }
 
     public function getId(): ?int
     {
@@ -389,6 +399,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPasswordChangeDate(?int $passwordChangeDate): self
     {
         $this->passwordChangeDate = $passwordChangeDate;
+
+        return $this;
+    }
+
+
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+
+    public function setConfirmationToken($confirmationToken)
+    {
+        $this->confirmationToken = $confirmationToken;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Profile;
 use Faker\Factory;
 use App\Entity\User;
+use App\Security\TokenGenerator;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -13,11 +14,15 @@ class AppFixtures extends Fixture
 {
     private $passwordHasher;
     private $faker;
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    private $tokenGenerator;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher, TokenGenerator $tokenGenerator)
     {
         $this->passwordHasher = $passwordHasher;
         $this->faker = Factory::create('fr FR');
+        $this->tokenGenerator = $tokenGenerator;
     }
+
     public function load(ObjectManager $manager): void
     {
         $this->loadProfile($manager);
@@ -26,13 +31,19 @@ class AppFixtures extends Fixture
 
     public function laodUser(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $user  = new User;
             $user->setEmail($this->faker->email())
                 ->setRoles(USER::ROLE_USER)
                 ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
-                ->setIsActivated(true)
+                ->setIsActivated($this->faker->randomElement([true, false]))
                 ->setProfile($this->getReference("profile$i"));
+
+            if (!$user->getIsActivated()) {
+                $user->setConfirmationToken(
+                    $this->tokenGenerator->getRandomeSecureToken()
+                );
+            }
             $manager->persist($user);
             $manager->flush();
         }
@@ -56,7 +67,7 @@ class AppFixtures extends Fixture
 
     public function loadProfile(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $profile = new Profile;
             $profile->setFirstname($this->faker->firstName())
                 ->setLastname($this->faker->lastName())

@@ -4,6 +4,7 @@ namespace App\DataPersister;
 
 use App\Entity\User;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Security\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -12,14 +13,17 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     private $_em;
     private $_passwordHasher;
+    private $_tokeGenerator;
 
     public function __construct(
         EntityManagerInterface $em,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        TokenGenerator $tokenGenerator
 
     ) {
         $this->_em = $em;
         $this->_passwordHasher = $passwordHasher;
+        $this->_tokeGenerator = $tokenGenerator;
     }
 
 
@@ -33,6 +37,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         if ($data instanceof User && (($context['collection_operation_name'] ?? null) === 'post')) {
 
+            // hash du mot de passe de l'utilisateur
             $data->setPassword(
                 $this->_passwordHasher->hashPassword(
                     $data,
@@ -40,7 +45,17 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
                 )
             );
 
+            // reset du planPassword 
             $data->eraseCredentials();
+
+            // désactiver le compte par default
+
+            $data->setIsActivated(false);
+
+            //Creation d'un token pour la connexion
+            $data->setConfirmationToken(
+                $this->_tokeGenerator->getRandomeSecureToken()
+            );
         }
 
         //enregistrement des données 
