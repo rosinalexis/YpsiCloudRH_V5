@@ -190,7 +190,7 @@ class Profile
     private $user;
 
     /**
-     * @Vich\UploadableField(mapping="images", fileNameProperty="url")
+     * @Vich\UploadableField(mapping="profiles", fileNameProperty="url")
      * @var File|null
      */
     //#[Assert\NotNull(groups: ["post:profile:image"])]
@@ -203,6 +203,12 @@ class Profile
      */
     #[Groups(['read:profile:item'])]
     private $url;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable = true)
+     */
+    #[Groups(['read:profile:item'])]
+    private $fileUrl;
 
 
 
@@ -373,13 +379,33 @@ class Profile
 
     public function getUrl()
     {
-        return '/images/' . $this->url;
+        return $this->url;
     }
 
 
     public function setUrl($url)
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+
+    public function getFileUrl()
+    {
+        return $this->fileUrl;
+    }
+
+    /**
+     * @ORM\PostUpdate
+     */
+    public function setFileUrl()
+    {
+        if (null !== $this->getUrl()) {
+            $this->fileUrl = '/images/profiles/' . $this->getUrl();
+        } else {
+            $this->fileUrl = null;
+        }
 
         return $this;
     }
