@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Image;
 use App\Entity\Profile;
 use Faker\Factory;
 use App\Entity\User;
