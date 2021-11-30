@@ -55,6 +55,7 @@ class UploadImageAction extends AbstractController
 
             return $image;
         }
+
         throw new ValidationException(
             $this->validator->validate($image)
         );

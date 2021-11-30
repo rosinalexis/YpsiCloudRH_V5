@@ -5,21 +5,38 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProfileRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ProfileImageUploadAction;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProfileRepository::class)
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="profiles")
+ *  @Vich\Uploadable()
  */
 #[ApiResource(
     collectionOperations: [
         'post' => [
             'denormalization_context' => [
                 'groups' => ['write:profile:collection'],
-                'normalization_context' => ['groups' => ['read:profile:collection', 'read:profile:item']]
+                'normalization_context' => ['groups' => ['read:profile:collection', 'read:profile:item']],
+                "validation_groups" => ["write:profile:collection"],
             ],
+        ],
+        'post-profile-image' => [
+            "method" => "POST",
+            "path" => "/profiles/{id}/add/image",
+            "controller" => ProfileImageUploadAction::class,
+            "deserialize" => false,
+            "denormalization_context" => [
+                "groups" => ["post:profile:image"]
+            ],
+            "security" => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
+            "security_message" => "You must be an admins or user owner for edit this profile.",
+            "validation_groups" => ["post:profile:image"]
         ]
     ],
     itemOperations: [
@@ -29,7 +46,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         'put' => [
             'denormalization_context' => ['groups' => ['write:profile:put']],
             "security" => "is_granted('ROLE_ADMIN') or object.getId() == user.getProfile().getId()",
-            "security_message" => "You must be an admins or user owner for edit this profile."
+            "security_message" => "You must be an admins or user owner for edit this profile.",
+            "validation_groups" => ["write:profile:put"]
         ],
         'delete' => [
             "security" => "is_granted('ROLE_ADMIN') ",
@@ -170,6 +188,24 @@ class Profile
      */
     #[Groups(['read:profile:item'])]
     private $user;
+
+    /**
+     * @Vich\UploadableField(mapping="images", fileNameProperty="url")
+     * @var File|null
+     */
+    //#[Assert\NotNull(groups: ["post:profile:image"])]
+    #[Groups(['post:profile:image', 'read:profile:collection'])]
+    private $file;
+
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable = true)
+     */
+    #[Groups(['read:profile:item'])]
+    private $url;
+
+
+
 
     public function getId(): ?int
     {
@@ -315,6 +351,35 @@ class Profile
         }
 
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file = null)
+    {
+        $this->file = $file;
+        if (null !== $file) {
+            $this->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        return $this;
+    }
+
+
+    public function getUrl()
+    {
+        return '/images/' . $this->url;
+    }
+
+
+    public function setUrl($url)
+    {
+        $this->url = $url;
 
         return $this;
     }
