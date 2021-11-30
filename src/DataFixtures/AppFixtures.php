@@ -62,6 +62,7 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_USER'])
             ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
             ->setIsActivated(true);
+
         $manager->persist($user);
         $manager->flush();
     }

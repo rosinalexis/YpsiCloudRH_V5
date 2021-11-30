@@ -32,7 +32,7 @@ class UserTest extends KernelTestCase
     {
         // récuperation des utilisateurs
         $users = $this->userRepo->count([]);
-        $this->assertEquals(5, $users);
+        $this->assertEquals(7, $users);
     }
 
     public function testUserRepositoryAdd(): void

@@ -27,7 +27,7 @@ class ProfileTest extends KernelTestCase
     {
         // récuperation des profiles
         $profiles = $this->profileRepo->count([]);
-        $this->assertEquals(3, $profiles);
+        $this->assertEquals(5, $profiles);
     }
 
     public function testProfileRespositoryAdd(): void

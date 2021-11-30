@@ -23,7 +23,7 @@ class ApiAuthenticationTest extends ApiTestCase
         $manager->flush();
 
         //test de la récuperation d'un token
-        $response = $client->request('POST', '/authentication_token', [
+        $response = $client->request('POST', '/api/login', [
             'headers' => ['Content-type' => 'application/json'],
             'json' => [
                 'username' => 'admin@test.fr',

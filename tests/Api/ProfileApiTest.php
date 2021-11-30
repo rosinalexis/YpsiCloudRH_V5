@@ -28,7 +28,7 @@ class ProfileApiTest extends ApiTestCase
 
         $response = $this->client->request(
             'POST',
-            '/authentication_token',
+            '/api/login',
             [
                 'headers' => [
                     'Content-Type' => 'application/json'
