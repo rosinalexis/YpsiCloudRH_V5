@@ -121,6 +121,7 @@ class Profile
     #[
         Groups([
             'read:profile:item',
+            'read:user:item',
             'write:profile:collection',
             'write:profile:put',
         ]),
@@ -137,6 +138,7 @@ class Profile
     #[
         Groups([
             'read:profile:item',
+            'read:user:item',
             'write:profile:collection',
             'write:profile:put'
         ]),
@@ -151,6 +153,7 @@ class Profile
     #[
         Groups([
             'read:profile:item',
+            'read:user:item',
             'write:profile:collection'
         ]),
         Assert\NotBlank(),
@@ -164,6 +167,7 @@ class Profile
     #[
         Groups([
             'read:profile:item',
+            'read:user:item',
             'write:profile:collection',
             'write:profile:put'
         ]),
@@ -174,13 +178,13 @@ class Profile
     /**
      * @ORM\Column(type="datetime_immutable")
      */
-    #[Groups(['read:profile:collection'])]
+    #[Groups(['read:profile:collection', 'read:user:item'])]
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      */
-    #[Groups(['read:profile:item'])]
+    #[Groups(['read:profile:item', 'read:user:item'])]
     private $updatedAt;
 
     /**
@@ -207,7 +211,7 @@ class Profile
     /**
      * @ORM\Column(type="string", length=255, nullable = true)
      */
-    #[Groups(['read:profile:item'])]
+    #[Groups(['read:profile:item', 'read:user:item'])]
     private $fileUrl;
 
 
@@ -261,7 +265,7 @@ class Profile
 
     public function setPhone(string $phone): self
     {
-        $this->phone = $phone;
+        $this->phone = strtolower($phone);
 
         return $this;
     }

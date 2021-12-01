@@ -32,7 +32,7 @@ class ProfileTest extends KernelTestCase
 
     public function testProfileRespositoryAdd(): void
     {
-        $nowDate = new \DateTimeImmutable();
+
         $profileTest = $this->getEntity();
         $this->entityManager->persist($profileTest);
         $this->entityManager->flush();
@@ -50,7 +50,7 @@ class ProfileTest extends KernelTestCase
         $this->assertObjectHasAttribute('updatedAt', $profile);
     }
 
-    public function testProfileRepositoryAddUpdate(): void
+    public function testProfileRepositoryUpdate(): void
     {
         //création
         $profileTest = $this->getEntity();

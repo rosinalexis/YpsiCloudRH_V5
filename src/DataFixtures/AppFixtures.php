@@ -2,10 +2,12 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Category;
+use Faker\Factory;
+use App\Entity\Job;
+use App\Entity\User;
 use App\Entity\Image;
 use App\Entity\Profile;
-use Faker\Factory;
-use App\Entity\User;
 use App\Security\TokenGenerator;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -20,12 +22,14 @@ class AppFixtures extends Fixture
     public function __construct(UserPasswordHasherInterface $passwordHasher, TokenGenerator $tokenGenerator)
     {
         $this->passwordHasher = $passwordHasher;
-        $this->faker = Factory::create('fr FR');
+        $this->faker = Factory::create('fr_FR');
         $this->tokenGenerator = $tokenGenerator;
     }
 
     public function load(ObjectManager $manager): void
     {
+        $this->loadCategory($manager);
+        $this->loadJob($manager);
         $this->loadProfile($manager);
         $this->laodUser($manager);
     }
@@ -38,7 +42,8 @@ class AppFixtures extends Fixture
                 ->setRoles(USER::ROLE_USER)
                 ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
                 ->setIsActivated($this->faker->randomElement([true, false]))
-                ->setProfile($this->getReference("profile$i"));
+                ->setProfile($this->getReference("profile$i"))
+                ->setJob($this->getReference("job$i"));
 
             if (!$user->getIsActivated()) {
                 $user->setConfirmationToken(
@@ -82,6 +87,44 @@ class AppFixtures extends Fixture
             $manager->flush();
 
             $this->setReference("profile$i", $profile);
+        }
+    }
+
+
+    public function loadJob(ObjectManager $manager): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $job = new Job();
+            $job->setTitle($this->faker->jobTitle())
+                ->setDescription($this->faker->realText())
+                ->setCategory($this->getReference("category$i"));
+
+            $manager->persist($job);
+            $manager->flush();
+
+            $this->setReference("job$i", $job);
+        }
+    }
+
+    public function loadCategory(ObjectManager $manager): void
+    {
+        $listCategory = [
+            0 => "Informatque",
+            1 => "Marketing",
+            2 => "Secrétariat",
+            3 => "Restaurant",
+            4 => "Management"
+        ];
+
+        foreach ($listCategory as $key => $categoryValue) {
+
+            $category = new Category;
+            $category->setTitle($categoryValue);
+            $category->setDescription($this->faker->realText());
+            $manager->persist($category);
+            $manager->flush();
+
+            $this->setReference("category$key", $category);
         }
     }
 }

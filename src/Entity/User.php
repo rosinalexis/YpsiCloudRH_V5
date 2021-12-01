@@ -180,6 +180,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $passwordChangeDate;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Job::class, inversedBy="user", cascade={"persist", "remove"})
+     */
+    #[Groups(['read:user:collection'])]
+    private $job;
+
 
     public function __construct()
     {
@@ -414,6 +420,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setConfirmationToken($confirmationToken)
     {
         $this->confirmationToken = $confirmationToken;
+
+        return $this;
+    }
+
+    public function getJob(): ?Job
+    {
+        return $this->job;
+    }
+
+    public function setJob(?Job $job): self
+    {
+        $this->job = $job;
 
         return $this;
     }
