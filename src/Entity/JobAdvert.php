@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\JobAdvertRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="jobs_adverts")
  */
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:jobAvert:collection']],
+    normalizationContext: ['groups' => ['read:jobAdvert:collection']],
     collectionOperations: [
         'get',
         'post' => [
@@ -25,9 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'put' => [
-            "denormalization_context" => [
-                'groups' => ['write:jobAdvert:collection']
-            ],
+            'denormalization_context' => ['groups' => ['write:jobAdvert:put']],
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can edit a jobAdvert.",
         ],
@@ -49,15 +49,15 @@ class JobAdvert
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:jobAvert:collection'])]
+    #[Groups(['read:jobAdvert:collection'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection']),
-        Assert\NotBlank(),
+        Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
+        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
         Assert\Length(min: 5, max: 100)
     ]
     private $title;
@@ -67,7 +67,7 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:item', 'write:jobAdvert:collection']),
-        Assert\NotBlank(),
+        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
         Assert\Length(min: 5, max: 100)
     ]
     private $place;
@@ -77,7 +77,7 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:item', 'write:jobAdvert:collection']),
-        Assert\NotBlank(),
+        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
         Assert\Length(min: 3, max: 100)
     ]
     private $compagny;
@@ -86,9 +86,9 @@ class JobAdvert
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection']),
-        Assert\NotBlank(),
-        Assert\Length(min: 5, max: 100)
+        Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
+        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
+        Assert\Length(min: 5, max: 100, groups: ['write:jobAdvert:collection'])
     ]
     private $contractType;
 
@@ -96,8 +96,8 @@ class JobAdvert
      * @ORM\Column(type="string", length=255,nullable=true)
      */
     #[
-        Groups(['read:jobAdvert:item', 'write:jobAdvert:collection']),
-        Assert\NotBlank(),
+        Groups(['read:jobAdvert:item', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
+        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
         Assert\Length(min: 5, max: 100)
     ]
     private $wage;
@@ -106,7 +106,7 @@ class JobAdvert
      * @ORM\Column(type="text", nullable=true)
      */
     #[
-        Groups(['read:jobAdvert:item', 'write:jobAdvert:collection']),
+        Groups(['read:jobAdvert:item', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
     ]
     private $description;
 
@@ -114,7 +114,7 @@ class JobAdvert
      * @ORM\Column(type="boolean")
      */
     #[
-        Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection']),
+        Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
         Assert\Type('bool')
     ]
     private $published;
@@ -122,13 +122,13 @@ class JobAdvert
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    #[Groups(['read:jobAdvert:item', 'write:jobAdvert:collection'])]
+    #[Groups(['read:jobAdvert:item', 'write:jobAdvert:collection', 'write:jobAdvert:put'])]
     private $tasks = [];
 
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    #[Groups(['read:jobAdvert:item', 'write:jobAdvert:collection'])]
+    #[Groups(['read:jobAdvert:item', 'write:jobAdvert:collection', 'write:jobAdvert:put'])]
     private $requirements = [];
 
     /**
@@ -142,6 +142,23 @@ class JobAdvert
      */
     #[Groups(['read:jobAdvert:item'])]
     private $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Contact::class, mappedBy="jobReference", orphanRemoval=true)
+     */
+    #[Groups(['read:jobAdvert:item'])]
+    private $contacts;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="jobAdverts")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
+
+    public function __construct()
+    {
+        $this->contacts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -291,5 +308,47 @@ class JobAdvert
         }
 
         $this->setUpdatedAt(new \DateTimeImmutable);
+    }
+
+    /**
+     * @return Collection|Contact[]
+     */
+    public function getContacts(): Collection
+    {
+        return $this->contacts;
+    }
+
+    public function addContact(Contact $contact): self
+    {
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts[] = $contact;
+            $contact->setJobReference($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(Contact $contact): self
+    {
+        if ($this->contacts->removeElement($contact)) {
+            // set the owning side to null (unless already changed)
+            if ($contact->getJobReference() === $this) {
+                $contact->setJobReference(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
     }
 }

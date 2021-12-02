@@ -92,12 +92,19 @@ class Category
     /**
      * @ORM\OneToMany(targetEntity=Job::class, mappedBy="category")
      */
-    #[Groups(['read:category:collection'])]
+    #[Groups(['read:category:item'])]
     private $jobs;
+
+    /**
+     * @ORM\OneToMany(targetEntity=JobAdvert::class, mappedBy="category", orphanRemoval=true)
+     */
+    #[Groups(['read:category:item'])]
+    private $jobAdverts;
 
     public function __construct()
     {
         $this->jobs = new ArrayCollection();
+        $this->jobAdverts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +197,36 @@ class Category
             // set the owning side to null (unless already changed)
             if ($job->getCategory() === $this) {
                 $job->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|JobAdvert[]
+     */
+    public function getJobAdverts(): Collection
+    {
+        return $this->jobAdverts;
+    }
+
+    public function addJobAdvert(JobAdvert $jobAdvert): self
+    {
+        if (!$this->jobAdverts->contains($jobAdvert)) {
+            $this->jobAdverts[] = $jobAdvert;
+            $jobAdvert->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobAdvert(JobAdvert $jobAdvert): self
+    {
+        if ($this->jobAdverts->removeElement($jobAdvert)) {
+            // set the owning side to null (unless already changed)
+            if ($jobAdvert->getCategory() === $this) {
+                $jobAdvert->setCategory(null);
             }
         }
 

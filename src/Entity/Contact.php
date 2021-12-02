@@ -41,7 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     itemOperations: [
         'put' => [
             "denormalization_context" => [
-                'groups' => ['write:contact:collection']
+                'groups' => ['write:contact:put']
             ],
             "security" => "is_granted('ROLE_ADMIN')",
             "security_message" => "Only admins can edit a Contact.",
@@ -66,14 +66,14 @@ class Contact
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:contact:collection'])]
+    #[Groups(['read:contact:collection', 'read:jobAdvert:item'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:contact:collection', 'write:contact:collection']),
+        Groups(['read:contact:collection', 'read:jobAdvert:item', 'write:contact:collection']),
         Assert\NotBlank(),
         Assert\Length(min: 1, max: 100)
     ]
@@ -83,7 +83,7 @@ class Contact
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:contact:collection', 'write:contact:collection']),
+        Groups(['read:contact:collection', 'read:jobAdvert:item', 'write:contact:collection']),
         Assert\NotBlank(),
         Assert\Length(min: 1, max: 100)
     ]
@@ -163,7 +163,7 @@ class Contact
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    #[Groups(['read:contact:item'])]
+    #[Groups(['read:contact:item', 'write:contact:put'])]
     private $management = [];
 
     /**
@@ -177,6 +177,16 @@ class Contact
      */
     #[Groups(['read:contact:item'])]
     private $updatedAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=JobAdvert::class, inversedBy="contacts")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    #[
+        Groups(['read:contact:collection', 'write:contact:collection']),
+    ]
+    private $jobReference;
+
 
     public function getId(): ?int
     {
@@ -386,6 +396,18 @@ class Contact
         } else {
             $this->coverLetterfileUrl = null;
         }
+
+        return $this;
+    }
+
+    public function getJobReference(): ?JobAdvert
+    {
+        return $this->jobReference;
+    }
+
+    public function setJobReference(?JobAdvert $jobReference): self
+    {
+        $this->jobReference = $jobReference;
 
         return $this;
     }

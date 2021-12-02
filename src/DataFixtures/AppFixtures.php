@@ -29,8 +29,8 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $this->loadJobAdvert($manager);
         $this->loadCategory($manager);
+        $this->loadJobAdvert($manager);
         $this->loadJob($manager);
         $this->loadProfile($manager);
         $this->laodUser($manager);
@@ -143,6 +143,7 @@ class AppFixtures extends Fixture
                 ->setWage($this->faker->numberBetween(1000, 3000) . "€")
                 ->setDescription($this->faker->realText())
                 ->setPublished($this->faker->randomElement([true, false]))
+                ->setCategory($this->getReference("category$i"))
                 ->setTasks(["task1", "task2", "task3"])
                 ->setRequirements(["requirement1", "requirement2", "requirement3"]);
 
