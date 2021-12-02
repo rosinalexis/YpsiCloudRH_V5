@@ -7,6 +7,7 @@ use Faker\Factory;
 use App\Entity\Job;
 use App\Entity\User;
 use App\Entity\Image;
+use App\Entity\JobAdvert;
 use App\Entity\Profile;
 use App\Security\TokenGenerator;
 use Doctrine\Persistence\ObjectManager;
@@ -28,6 +29,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $this->loadJobAdvert($manager);
         $this->loadCategory($manager);
         $this->loadJob($manager);
         $this->loadProfile($manager);
@@ -125,6 +127,27 @@ class AppFixtures extends Fixture
             $manager->flush();
 
             $this->setReference("category$key", $category);
+        }
+    }
+
+    public function loadJobAdvert(ObjectManager $manager): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+
+            $jobAdvert = new JobAdvert();
+
+            $jobAdvert->setTitle($this->faker->jobTitle())
+                ->setPlace($this->faker->country())
+                ->setCompagny('YPSI')
+                ->setContractType($this->faker->randomElement(['CDD', 'CDI', 'ITERIM']))
+                ->setWage($this->faker->numberBetween(1000, 3000) . "€")
+                ->setDescription($this->faker->realText())
+                ->setPublished($this->faker->randomElement([true, false]))
+                ->setTasks(["task1", "task2", "task3"])
+                ->setRequirements(["requirement1", "requirement2", "requirement3"]);
+
+            $manager->persist($jobAdvert);
+            $manager->flush();
         }
     }
 }

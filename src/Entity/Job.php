@@ -22,14 +22,14 @@ use Symfony\Component\Validator\Constraints as Assert;
             "security_message" => "Only User can add show Job.",
         ],
         'post' => [
-            'denormalization_context' => ['groups' => ['write:job:collection']],
+            "denormalization_context" => ['groups' => ['write:job:collection']],
             "security" => "is_granted('ROLE_ADMIN')",
             "security_message" => "Only admins can add a Job.",
         ]
     ],
     itemOperations: [
         'put' => [
-            'denormalization_context' => ['groups' => ['write:job:collection']],
+            "denormalization_context" => ['groups' => ['write:job:collection']],
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can edit a job.",
         ],

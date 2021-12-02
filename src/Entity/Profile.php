@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ProfileRepository::class)
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="profiles")
- *  @Vich\Uploadable()
+ * @Vich\Uploadable()
  */
 #[ApiResource(
     collectionOperations: [
@@ -197,8 +197,8 @@ class Profile
      * @Vich\UploadableField(mapping="profiles", fileNameProperty="url")
      * @var File|null
      */
-    //#[Assert\NotNull(groups: ["post:profile:image"])]
-    #[Groups(['post:profile:image', 'read:profile:collection'])]
+    //#[Assert\NotNull(groups: ["post:profile:image"], ['read:profile:collection'])]
+    #[Groups(['post:profile:image'])]
     private $file;
 
 
