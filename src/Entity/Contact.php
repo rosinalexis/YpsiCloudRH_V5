@@ -75,7 +75,7 @@ class Contact
     #[
         Groups(['read:contact:collection', 'read:jobAdvert:item', 'write:contact:collection']),
         Assert\NotBlank(),
-        Assert\Length(min: 1, max: 100)
+        Assert\Length(min: 2, max: 100)
     ]
     private $firstname;
 
@@ -85,7 +85,7 @@ class Contact
     #[
         Groups(['read:contact:collection', 'read:jobAdvert:item', 'write:contact:collection']),
         Assert\NotBlank(),
-        Assert\Length(min: 1, max: 100)
+        Assert\Length(min: 2, max: 100)
     ]
     private $lastname;
 
@@ -156,7 +156,7 @@ class Contact
      */
     #[
         Groups(['read:contact:item', 'write:contact:collection']),
-        Assert\Length(min: 5, max: 255)
+        Assert\Length(max: 255)
     ]
     private $message;
 
@@ -200,7 +200,7 @@ class Contact
 
     public function setFirstname(string $firstname): self
     {
-        $this->firstname = $firstname;
+        $this->firstname = strtolower($firstname);
 
         return $this;
     }
@@ -212,7 +212,7 @@ class Contact
 
     public function setLastname(string $lastname): self
     {
-        $this->lastname = $lastname;
+        $this->lastname = strtolower($lastname);
 
         return $this;
     }
@@ -224,7 +224,7 @@ class Contact
 
     public function setEmail(string $email): self
     {
-        $this->email = $email;
+        $this->email = strtolower($email);
 
         return $this;
     }
@@ -236,7 +236,7 @@ class Contact
 
     public function setSubject(?string $subject): self
     {
-        $this->subject = $subject;
+        $this->subject = strtolower($subject);
 
         return $this;
     }
@@ -261,7 +261,7 @@ class Contact
 
     public function setMessage(?string $message): self
     {
-        $this->message = $message;
+        $this->message = strtolower($message);
 
         return $this;
     }

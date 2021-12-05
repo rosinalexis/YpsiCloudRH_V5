@@ -57,8 +57,8 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
-        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
-        Assert\Length(min: 5, max: 100)
+        Assert\NotBlank(),
+        Assert\Length(min: 3, max: 100)
     ]
     private $title;
 
@@ -67,7 +67,7 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:item', 'write:jobAdvert:collection']),
-        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
+        Assert\NotBlank(),
         Assert\Length(min: 5, max: 100)
     ]
     private $place;
@@ -77,7 +77,7 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:item', 'write:jobAdvert:collection']),
-        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
+        Assert\NotBlank(),
         Assert\Length(min: 3, max: 100)
     ]
     private $compagny;
@@ -87,8 +87,8 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
-        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
-        Assert\Length(min: 5, max: 100, groups: ['write:jobAdvert:collection'])
+        Assert\NotBlank(),
+        Assert\Length(min: 3, max: 100)
     ]
     private $contractType;
 
@@ -97,7 +97,6 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:item', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
-        Assert\NotBlank(groups: ['write:jobAdvert:collection']),
         Assert\Length(min: 5, max: 100)
     ]
     private $wage;
@@ -153,6 +152,7 @@ class JobAdvert
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="jobAdverts")
      * @ORM\JoinColumn(nullable=false)
      */
+    #[Groups(['read:jobAdvert:item', 'write:jobAdvert:collection'])]
     private $category;
 
     public function __construct()
@@ -172,7 +172,7 @@ class JobAdvert
 
     public function setTitle(string $title): self
     {
-        $this->title = $title;
+        $this->title = strtolower($title);
 
         return $this;
     }
@@ -184,7 +184,7 @@ class JobAdvert
 
     public function setPlace(string $place): self
     {
-        $this->place = $place;
+        $this->place = strtolower($place);
 
         return $this;
     }
@@ -196,7 +196,7 @@ class JobAdvert
 
     public function setCompagny(string $compagny): self
     {
-        $this->compagny = $compagny;
+        $this->compagny = strtolower($compagny);
 
         return $this;
     }
@@ -208,7 +208,7 @@ class JobAdvert
 
     public function setContractType(string $contractType): self
     {
-        $this->contractType = $contractType;
+        $this->contractType = strtolower($contractType);
 
         return $this;
     }
@@ -220,7 +220,7 @@ class JobAdvert
 
     public function setWage(string $wage): self
     {
-        $this->wage = $wage;
+        $this->wage = strtolower($wage);
 
         return $this;
     }
@@ -232,7 +232,7 @@ class JobAdvert
 
     public function setDescription(?string $description): self
     {
-        $this->description = $description;
+        $this->description = strtolower($description);
 
         return $this;
     }

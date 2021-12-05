@@ -33,7 +33,7 @@ class Mailer
 
         $message = (new Email())
             ->from('botgerome@ypsicloudrh.com')
-            ->to($user->getEmail())
+            ->to("alexisbotdev@gmail.com")
             ->subject('Votre compte Ypsi Cloud RH est en attente d\'activation !')
             ->html($body, 'text\html');
 

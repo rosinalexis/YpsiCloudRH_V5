@@ -42,7 +42,7 @@ class CategoryEntityTest extends KernelTestCase
     }
 
 
-    private function getEntity(): Category
+    public static function getEntity(): Category
     {
         $category = new Category();
         $category->setTitle("testJob")

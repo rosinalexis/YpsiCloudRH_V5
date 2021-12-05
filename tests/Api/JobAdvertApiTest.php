@@ -3,20 +3,22 @@
 namespace App\Tests\Api;
 
 use App\Entity\Category;
+use App\Entity\JobAdvert;
+use PHPUnit\Framework\MockObject\Api;
 use Symfony\Component\HttpFoundation\Response;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 
-class CategoryApiTest extends ApiTestCase
+class JobAdvertApiTest extends ApiTestCase
 {
     private $client;
     private $token;
-
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->token = $this->getToken();
     }
+
 
     private function getToken($body = []): string
     {
@@ -42,70 +44,51 @@ class CategoryApiTest extends ApiTestCase
         return $data['token'];
     }
 
-    public function testCategoryApiGetCollection(): void
+    public function testJobAdvertApiGetCollection(): void
     {
         $response = $this->sendRequest('GET');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertCount(5, $response->toArray()['hydra:member']);
     }
 
-    public function testCategoryApiPostItem(): void
+    public function testJobAdvertApiPostItem(): void
     {
-        $category = $this->getEntity();
+        $jobAdvert = $this->getEntity();
 
         //on vérifie que l'utilisateur a bien été créé
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $this->assertArrayHasKey('id', $category);
+        $this->assertArrayHasKey('id', $jobAdvert);
     }
 
-    public function testCategoryApiGetItem(): void
+
+    public function testJobAdvertApiUpdateItem(): void
     {
-        $category  = $this->getEntity();
-
-        $uri = $this->findIriBy(Category::class, ['title' => $category["title"]]);
-
-        $response = $this->sendRequest('GET', $uri);
-
-        $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertJsonContains([
-            'title' => $category["title"]
-        ]);
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-        $this->assertMatchesRegularExpression('~^/api/categories/\d+$~', $response->toArray()['@id']);
-    }
-
-    public function testCategoryApiUpdateItem(): void
-    {
-        $category  = $this->getEntity();
-
-        $uri = $this->findIriBy(Category::class, ['title' => $category["title"]]);
-
+        $this->getEntity();
+        $uri = $this->findIriBy(JobAdvert::class, ['title' => 'Concepteur']);
         $response = $this->client->request('PUT', $uri, [
             'headers' => [
                 'Content-Type' => 'application/ld+json'
             ],
             'auth_bearer' => $this->token,
             'json' => [
-                'title' => 'categorytitle Updated'
+                'title' => 'Concepteur Updated'
             ]
         ]);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertEquals('categorytitle updated', $response->toArray()['title']);
+        $this->assertEquals('concepteur updated', $response->toArray()['title']);
     }
 
-    public function testCategoryApiDeleteItem(): void
+    public function testJobApiDeleteItem(): void
     {
-        $category  = $this->getEntity();
-
-        $uri = $this->findIriBy(Category::class, ['title' => $category["title"]]);
+        $this->getEntity();
+        $uri = $this->findIriBy(JobAdvert::class, ['title' => 'concepteur']);
 
         $response = $this->sendRequest("DELETE", $uri);
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(Category::class)->findOneBy(['title' => $category["title"]])
+            static::getContainer()->get('doctrine')->getRepository(JobAdvert::class)->findOneBy(['title' => 'concepteur'])
         );
     }
 
@@ -119,16 +102,45 @@ class CategoryApiTest extends ApiTestCase
         ];
 
         //test ajouter un utilisateur
-        $response = $this->sendRequest('POST', null, $newCategory);
+        $category = $this->sendRequest('POST', "/api/categories", $newCategory);
+
+        $categoryUri = $this->findIriBy(Category::class, ['title' => "CategoryTest1"]);
+
+        //définition de l'utilisateur
+        $newJobAdvert = [
+            "title" => "Concepteur",
+            "place" => "Algérie",
+            "compagny" => "YPSI",
+            "contractType" => "ITERIM",
+            "wage" => "1461€",
+            "description" => "Bray, tandis que, du côté des champs. Il y eut quelques réclamations; elle les touchait! -- ni des sifflets de vermeil pour ses cataplasmes, et le soleil, avaient la couleur du cidre doux, et ils se.",
+            "published" => true,
+            "tasks" => [
+                "task1",
+                "task2",
+                "task3"
+            ],
+            "requirements" => [
+                "requirement1",
+                "requirement2",
+                "requirement3"
+            ],
+
+            "category" => $categoryUri
+        ];
+
+        //test ajouter un utilisateur
+        $response = $this->sendRequest('POST', null, $newJobAdvert);
         $data  = $response->toArray();
 
         return $data;
     }
 
 
+
     private function sendRequest(string $method, string $uri = null, $data = [])
     {
-        $uri ? $uri : ($uri = '/api/categories');
+        $uri ? $uri : ($uri = '/api/job_adverts');
 
         if (!$data) {
             $data = [];
