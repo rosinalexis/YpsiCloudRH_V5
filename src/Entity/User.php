@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Controller\CurrentUserAction;
 use App\Controller\ResetPasswordAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -29,9 +30,17 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             "validation_groups" => ['Default', 'write:user:collection'],
             "security" => "is_granted('ROLE_ADMIN')",
             "security_message" => "Only admins can add user.",
-        ]
+        ],
+        'get-current-user' => [
+            "security" => "is_granted('IS_AUTHENTICATED_FULLY')",
+            "security_message" => "You most be authenticated.",
+            "method" => "GET",
+            "path" => "users/auth",
+            "controller" => CurrentUserAction::class,
+        ],
     ],
     itemOperations: [
+
         'put' => [
             'denormalization_context' => ['groups' => ['write:user:put']],
             "security" => "is_granted('ROLE_ADMIN') ",
@@ -56,6 +65,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
                 'groups' => ['read:user:collection', 'read:user:item']
             ]
         ],
+
 
     ]
 
