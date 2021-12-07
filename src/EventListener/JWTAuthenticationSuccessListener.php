@@ -49,7 +49,7 @@ class JWTAuthenticationSuccessListener
                 true, // secure
                 true, // httpOnly
                 false, // raw
-                'lax' // same-site parameter, can be 'lax' or 'strict'.
+                'none' // same-site parameter, can be 'lax' or 'strict'.
             )
         );
     }
