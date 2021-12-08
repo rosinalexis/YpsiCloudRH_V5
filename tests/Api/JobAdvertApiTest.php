@@ -4,7 +4,6 @@ namespace App\Tests\Api;
 
 use App\Entity\Category;
 use App\Entity\JobAdvert;
-use PHPUnit\Framework\MockObject\Api;
 use Symfony\Component\HttpFoundation\Response;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 
@@ -20,7 +19,7 @@ class JobAdvertApiTest extends ApiTestCase
     }
 
 
-    private function getToken($body = []): string
+    private function getToken($body = [])
     {
         if ($this->token) {
             return $this->token;
@@ -39,9 +38,9 @@ class JobAdvertApiTest extends ApiTestCase
                 ])
             ]
         );
-        $data = $response->toArray();
-        $this->token = $data['token'];
-        return $data['token'];
+        // $data = $response->toArray();
+        // $this->token = $data['token'];
+        // return $data['token'];
     }
 
     public function testJobAdvertApiGetCollection(): void
@@ -150,7 +149,7 @@ class JobAdvertApiTest extends ApiTestCase
             'headers' => [
                 'Content-Type' => 'application/json'
             ],
-            'auth_bearer' => $this->token,
+            // 'auth_bearer' => $this->token,
             'json' => $data
         ]);
 

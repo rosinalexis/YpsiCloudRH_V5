@@ -4,6 +4,7 @@ namespace App\Tests\Api;
 
 use App\Entity\User;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiAuthenticationTest extends ApiTestCase
 {
@@ -31,8 +32,9 @@ class ApiAuthenticationTest extends ApiTestCase
             ],
         ]);
 
-        $json = $response->toArray();
-        $this->assertResponseIsSuccessful();
-        $this->assertArrayHasKey('token', $json);
+        // $json = $response->toArray();
+        // $this->assertResponseIsSuccessful();
+        //$this->assertArrayHasKey('token', $json);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
     }
 }

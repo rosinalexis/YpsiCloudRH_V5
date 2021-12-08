@@ -18,7 +18,7 @@ class UserApiTest extends ApiTestCase
     }
 
 
-    private function getToken($body = []): string
+    private function getToken($body = [])
     {
         if ($this->token) {
             return $this->token;
@@ -38,12 +38,12 @@ class UserApiTest extends ApiTestCase
             ]
         );
 
-        $data = $response->toArray();
-        $this->token = $data['token'];
-        // $data = json_decode($response->getContent());
-        // $this->token = $data->token;
+        // $data = $response->toArray();
+        // $this->token = $data['token'];
+        // // $data = json_decode($response->getContent());
+        // // $this->token = $data->token;
 
-        return $data['token'];
+        // return $data['token'];
     }
 
     public function testUserApiGetCollection(): void
@@ -141,10 +141,11 @@ class UserApiTest extends ApiTestCase
             ]
         );
 
-        $token = $response->toArray()['token'];
+        // $token = $response->toArray()['token'];
 
         $uri = $this->findIriBy(User::class, ['email' => 'admin@admin.fr']);
-        $response = static::createClient()->request('DELETE', $uri,  ['auth_bearer' => $token]);
+        //$response = static::createClient()->request('DELETE', $uri);
+        $this->sendRequest('DELETE', $uri);
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
@@ -164,18 +165,23 @@ class UserApiTest extends ApiTestCase
             ]
         );
 
-        $token = $response->toArray()['token'];
+        // $token = $response->toArray()['token'];
 
         $uri = $this->findIriBy(User::class, ['email' => 'admin@admin.fr']);
-        $response = static::createClient()->request('PUT', $uri,  [
-            'headers' => [
-                'Content-Type' => 'application/ld+json'
-            ],
-            'auth_bearer' => $token,
-            'json' => [
-                'isActivated' => false
-            ]
-        ]);
+        // $response = static::createClient()->request('PUT', $uri,  [
+        //     'headers' => [
+        //         'Content-Type' => 'application/ld+json'
+        //     ],
+        //     'auth_bearer' => $token,
+        //     'json' => [
+        //         'isActivated' => false
+        //     ]
+        // ]);
+        $this->sendRequest('DELETE', $uri, ['headers' => [
+            'Content-Type' => 'application/ld+json'
+        ], 'json' => [
+            'isActivated' => false
+        ]]);
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
@@ -187,7 +193,7 @@ class UserApiTest extends ApiTestCase
             'headers' => [
                 'Content-Type' => 'application/json'
             ],
-            'auth_bearer' => $this->token,
+            // 'auth_bearer' => $this->token,
             'json' => ($data ? $data : [])
         ]);
 

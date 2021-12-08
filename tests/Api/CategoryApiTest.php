@@ -18,7 +18,7 @@ class CategoryApiTest extends ApiTestCase
         $this->token = $this->getToken();
     }
 
-    private function getToken($body = []): string
+    private function getToken($body = [])
     {
         if ($this->token) {
             return $this->token;
@@ -37,9 +37,6 @@ class CategoryApiTest extends ApiTestCase
                 ])
             ]
         );
-        $data = $response->toArray();
-        $this->token = $data['token'];
-        return $data['token'];
     }
 
     public function testCategoryApiGetCollection(): void
@@ -85,7 +82,7 @@ class CategoryApiTest extends ApiTestCase
             'headers' => [
                 'Content-Type' => 'application/ld+json'
             ],
-            'auth_bearer' => $this->token,
+            // 'auth_bearer' => $this->token,
             'json' => [
                 'title' => 'categorytitle Updated'
             ]
@@ -138,7 +135,7 @@ class CategoryApiTest extends ApiTestCase
             'headers' => [
                 'Content-Type' => 'application/json'
             ],
-            'auth_bearer' => $this->token,
+            //'auth_bearer' => $this->token,
             'json' => $data
         ]);
 

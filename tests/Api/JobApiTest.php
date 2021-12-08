@@ -19,7 +19,7 @@ class JobApiTest extends ApiTestCase
         $this->token = $this->getToken();
     }
 
-    private function getToken($body = []): string
+    private function getToken($body = [])
     {
         if ($this->token) {
             return $this->token;
@@ -38,9 +38,9 @@ class JobApiTest extends ApiTestCase
                 ])
             ]
         );
-        $data = $response->toArray();
-        $this->token = $data['token'];
-        return $data['token'];
+        // $data = $response->toArray();
+        // $this->token = $data['token'];
+        // return $data['token'];
     }
 
     public function testJobApiGetCollection(): void
@@ -137,7 +137,7 @@ class JobApiTest extends ApiTestCase
             'headers' => [
                 'Content-Type' => 'application/json'
             ],
-            'auth_bearer' => $this->token,
+            // 'auth_bearer' => $this->token,
             'json' => $data
         ]);
 

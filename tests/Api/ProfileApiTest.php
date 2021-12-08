@@ -20,7 +20,7 @@ class ProfileApiTest extends ApiTestCase
         $this->token = $this->getToken();
     }
 
-    private function getToken($body = []): string
+    private function getToken($body = [])
     {
         if ($this->token) {
             return $this->token;
@@ -40,12 +40,12 @@ class ProfileApiTest extends ApiTestCase
             ]
         );
 
-        $data = $response->toArray();
-        $this->token = $data['token'];
-        // $data = json_decode($response->getContent());
-        // $this->token = $data->token;
+        // $data = $response->toArray();
+        // $this->token = $data['token'];
+        // // $data = json_decode($response->getContent());
+        // // $this->token = $data->token;
 
-        return $data['token'];
+        // return $data['token'];
     }
 
     public function testProfileApiGetCollection(): void
@@ -153,7 +153,7 @@ class ProfileApiTest extends ApiTestCase
             'headers' => [
                 'Content-Type' => 'application/json'
             ],
-            'auth_bearer' => $this->token,
+            // 'auth_bearer' => $this->token,
             'json' => $data
         ]);
 
