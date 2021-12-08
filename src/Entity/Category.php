@@ -62,7 +62,7 @@ class Category
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:category:collection', 'read:user:item', 'write:category:collection']),
+        Groups(['read:category:collection', 'read:job:collection', 'read:user:item', 'write:category:collection']),
         Assert\NotBlank(),
         Assert\Length(min: 5, max: 100)
     ]
@@ -72,7 +72,7 @@ class Category
      * @ORM\Column(type="text", nullable=true)
      */
     #[
-        Groups(['read:category:item', 'write:category:collection']),
+        Groups(['read:category:collection', 'write:category:collection']),
         Assert\Length(max: 255)
     ]
     private $description;
@@ -80,7 +80,7 @@ class Category
     /**
      * @ORM\Column(type="datetime_immutable")
      */
-    #[Groups(['read:category:item'])]
+    #[Groups(['read:category:collection'])]
     private $createdAt;
 
     /**

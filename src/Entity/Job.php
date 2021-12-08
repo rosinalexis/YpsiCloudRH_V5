@@ -14,7 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="jobs")
  */
 #[ApiResource(
-    attributes: ["security" => "is_granted('IS_AUTHENTICATED_FULLY')"],
     normalizationContext: ['groups' => ['read:job:collection']],
     collectionOperations: [
         'get' => [
@@ -76,7 +75,7 @@ class Job
     /**
      * @ORM\Column(type="datetime_immutable")
      */
-    #[Groups(['read:job:item', 'read:user:item'])]
+    #[Groups(['read:job:collection', 'read:user:item'])]
     private $createdAt;
 
     /**
