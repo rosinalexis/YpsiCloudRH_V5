@@ -12,7 +12,7 @@ class SecurityController extends AbstractController
     public function logout(): Response
     {
         $response = new Response();
-        $response->headers->clearCookie('BEARER', '/', null);
+        $response->headers->clearCookie('BEARER', '/', null, true, true, 'none');
 
         return $response;
     }
