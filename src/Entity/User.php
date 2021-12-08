@@ -102,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[
         Groups([
-            'read:user:item',
+            'read:user:collection',
             'write:user:collection'
         ]),
         Assert\NotBlank,
