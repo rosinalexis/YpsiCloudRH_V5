@@ -392,7 +392,7 @@ class Contact
     public function setCoverLetterfileUrl()
     {
         if (null !== $this->getCoverLetterUrl()) {
-            $this->coverLetterfileUrl = '/images/profiles/' . $this->getCoverLetterUrl();
+            $this->coverLetterfileUrl = '/images/contacts/' . $this->getCoverLetterUrl();
         } else {
             $this->coverLetterfileUrl = null;
         }

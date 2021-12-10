@@ -49,14 +49,14 @@ class JobAdvert
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:jobAdvert:collection'])]
+    #[Groups(['read:jobAdvert:collection', 'read:contact:collection'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:jobAdvert:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
+        Groups(['read:jobAdvert:collection', 'read:contact:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
         Assert\NotBlank(),
         Assert\Length(min: 3, max: 100)
     ]
