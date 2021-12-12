@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Controller\CurrentUserAction;
 use App\Controller\ResetPasswordAction;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -103,9 +102,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[
         Groups([
             'read:user:collection',
-            'write:user:collection'
+            'write:user:collection',
+            'write:user:put'
         ]),
-        Assert\NotBlank,
+        Assert\NotBlank(groups: ['write:user:collection']),
         Assert\Choice([self::ROLE_USER, self::ROLE_ADMIN])
     ]
     private $roles = [];

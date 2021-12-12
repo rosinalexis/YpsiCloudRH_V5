@@ -3,11 +3,14 @@
 namespace App\DataPersister;
 
 use App\Entity\User;
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Email\Mailer;
 use App\Security\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+
 
 final class UserDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -39,6 +42,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
+
         if ($data instanceof User && (($context['collection_operation_name'] ?? null) === 'post')) {
 
             // hash du mot de passe de l'utilisateur
@@ -62,6 +66,14 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
             );
 
             $this->_mailer->sendConfirmationEmail($data);
+        }
+
+        if ($data instanceof User && (($context['item_operation_name'] ?? null) === 'put')) {
+
+            // check si le compte a été activé par l'utilisateur 
+            if ($data->getConfirmationToken()) {
+                throw new BadRequestHttpException("This user has not yet activated his account.");
+            }
         }
 
         //enregistrement des données 
