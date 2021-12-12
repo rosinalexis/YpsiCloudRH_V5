@@ -60,7 +60,7 @@ class Job
      */
 
     #[
-        Groups(['read:job:collection', 'read:user:collection', 'write:job:collection']),
+        Groups(['read:job:collection', 'read:user:collection', 'write:job:collection', 'write:user:collection']),
         Assert\NotBlank(),
         Assert\Length(min: 5)
     ]
@@ -69,7 +69,7 @@ class Job
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    #[Groups(['read:job:item', 'read:user:item', 'write:job:collection'])]
+    #[Groups(['read:job:item', 'read:user:item', 'write:job:collection', 'write:user:collection'])]
     private $description;
 
     /**
@@ -93,7 +93,7 @@ class Job
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="jobs")
      */
-    #[Groups(['read:job:collection', 'read:user:item'])]
+    #[Groups(['read:job:collection', 'read:user:item', 'write:user:collection', 'write:job:collection'])]
     private $category;
 
     public function getId(): ?int

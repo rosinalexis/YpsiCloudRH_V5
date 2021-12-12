@@ -81,6 +81,7 @@ class Profile
             'read:profile:collection',
             'read:user:collection',
             'write:profile:collection',
+            'write:user:collection',
             'read:user:item'
         ]),
         Assert\Length(min: 5, max: 255),
@@ -93,7 +94,7 @@ class Profile
      */
     #[
         Groups([
-            'read:profile:collection', 'write:profile:collection',
+            'read:profile:collection', 'write:profile:collection', 'write:user:collection',
             'read:user:collection'
         ]),
         Assert\Length(min: 5, max: 255),
@@ -108,7 +109,7 @@ class Profile
         Groups([
             'read:profile:item',
             'read:user:collection',
-            'write:profile:collection'
+            'write:profile:collection', 'write:user:collection'
         ]),
         Assert\Choice([self::GENDER_MALE, self::GENDER_FEMALE, self::GENDER_GIRL]),
         Assert\NotBlank()
@@ -122,7 +123,7 @@ class Profile
         Groups([
             'read:profile:item',
             'read:user:item',
-            'write:profile:collection',
+            'write:profile:collection', 'write:user:collection',
             'write:profile:put',
         ]),
         Assert\Length(min: 10, max: 20),
@@ -139,7 +140,7 @@ class Profile
         Groups([
             'read:profile:item',
             'read:user:item',
-            'write:profile:collection',
+            'write:profile:collection', 'write:user:collection',
             'write:profile:put'
         ]),
         Assert\Length(min: 8, max: 255),
@@ -154,7 +155,7 @@ class Profile
         Groups([
             'read:profile:item',
             'read:user:item',
-            'write:profile:collection'
+            'write:profile:collection', 'write:user:collection'
         ]),
         Assert\NotBlank(),
         Assert\Type("DateTimeImmutable")
@@ -168,7 +169,7 @@ class Profile
         Groups([
             'read:profile:item',
             'read:user:item',
-            'write:profile:collection',
+            'write:profile:collection', 'write:user:collection',
             'write:profile:put'
         ]),
         Assert\Length(max: 255, maxMessage: "Max description value."),

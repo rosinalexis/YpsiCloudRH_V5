@@ -159,7 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToOne(targetEntity=Profile::class, inversedBy="user", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true)
      */
-    #[Groups(['read:user:collection'])]
+    #[Groups(['read:user:collection', 'write:user:collection'])]
     private $profile;
 
 
@@ -193,7 +193,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\OneToOne(targetEntity=Job::class, inversedBy="user", cascade={"persist", "remove"})
      */
-    #[Groups(['read:user:collection'])]
+    #[Groups(['read:user:collection', 'write:user:collection'])]
     private $job;
 
 
