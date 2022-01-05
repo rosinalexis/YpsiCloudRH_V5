@@ -111,7 +111,7 @@ class AppFixtures extends Fixture
     public function loadCategory(ObjectManager $manager): void
     {
         $listCategory = [
-            0 => "Informatque",
+            0 => "Informatique",
             1 => "Marketing",
             2 => "Secrétariat",
             3 => "Restaurant",
