@@ -190,7 +190,7 @@ class Contact
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:contact:item', 'write:contact:put'])]
+    #[Groups(['read:contact:collection', 'read:contact:item', 'write:contact:put'])]
     private $state;
 
 
