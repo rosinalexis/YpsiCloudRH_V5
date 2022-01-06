@@ -164,7 +164,7 @@ class Contact
      * @ORM\Column(type="json", nullable=true)
      */
     #[Groups(['read:contact:item', 'write:contact:put'])]
-    private $management = [];
+    private $management;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -186,6 +186,12 @@ class Contact
         Groups(['read:contact:collection', 'write:contact:collection']),
     ]
     private $jobReference;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    #[Groups(['read:contact:item', 'write:contact:put'])]
+    private $state;
 
 
     public function getId(): ?int
@@ -408,6 +414,18 @@ class Contact
     public function setJobReference(?JobAdvert $jobReference): self
     {
         $this->jobReference = $jobReference;
+
+        return $this;
+    }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): self
+    {
+        $this->state = $state;
 
         return $this;
     }

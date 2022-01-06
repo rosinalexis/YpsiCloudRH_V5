@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Contact;
 
-final class ConctactDataPersister implements ContextAwareDataPersisterInterface
+final class ContactDataPersister implements ContextAwareDataPersisterInterface
 {
 
     private $_em;
@@ -24,35 +24,37 @@ final class ConctactDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
+
         if ($data instanceof Contact && (($context['collection_operation_name'] ?? null) === 'post')) {
 
             $management = [
                 "contactAdministrationValidation" => [
-                    "status" => null,
+                    "state" => false,
                     "supervisor" => null
                 ],
                 "contactAdministrationMeeting" => [
-                    "status" => null,
+                    "state" => false,
                     "supervisor" => null
                 ],
                 "contactAdministrationHelp" => [
-                    "status" => null,
+                    "state" => false,
                     "helpList" => []
                 ],
                 "contactAdministrationDocument" => [
-                    "status" => null,
+                    "state" => false,
                     "documentList" => []
                 ],
                 "contactAdministrationContract" => [
-                    "status" => null,
+                    "state" => false,
                 ],
                 "contactAdministrationEquipement" => [
-                    "status" => null,
+                    "state" => false,
                     "equipementList" => []
                 ]
             ];
 
             $data->setManagement($management);
+            $data->setState("NR");
         }
 
         //enregistrement des données 
