@@ -68,7 +68,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
 
         if ($data instanceof Contact && (($context['item_operation_name'] ?? null) === 'put')) {
 
-            if ($data->getManagement()["receiptConfirmation"]["status"]) {
+            if ($data->getManagement()["receiptConfirmation"]["state"]) {
 
                 //envoyer le mail
                 $this->_mailer->sendReceiptConfirmationMail($data);
