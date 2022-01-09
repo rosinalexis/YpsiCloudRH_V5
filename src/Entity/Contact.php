@@ -129,7 +129,7 @@ class Contact
      * @ORM\Column(type="string", length=255, nullable = true)
      */
     #[Groups(['read:contact:item'])]
-    private $cvfileUrl;
+    private $cvFileUrl;
 
 
     /**
@@ -149,7 +149,7 @@ class Contact
      * @ORM\Column(type="string", length=255, nullable = true)
      */
     #[Groups(['read:contact:item'])]
-    private $coverLetterfileUrl;
+    private $coverLetterFileUrl;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -350,21 +350,21 @@ class Contact
     }
 
 
-    public function getCvfileUrl()
+    public function getCvFileUrl()
     {
-        return $this->cvfileUrl;
+        return $this->cvFileUrl;
     }
 
 
     /**
      * @ORM\PostUpdate
      */
-    public function setCvfileUrl()
+    public function setCvFileUrl()
     {
         if (null !== $this->getCvUrl()) {
-            $this->cvfileUrl = "/images/contacts/" . $this->getCvUrl();
+            $this->cvFileUrl = "/images/contacts/" . $this->getCvUrl();
         } else {
-            $this->cvfileUrl = null;
+            $this->cvFileUrl = null;
         }
 
         return $this;
@@ -387,20 +387,20 @@ class Contact
         return $this;
     }
 
-    public function getCoverLetterfileUrl()
+    public function getCoverLetterFileUrl()
     {
-        return $this->coverLetterfileUrl;
+        return $this->coverLetterFileUrl;
     }
 
     /**
      * @ORM\PostUpdate
      */
-    public function setCoverLetterfileUrl()
+    public function setCoverLetterFileUrl()
     {
         if (null !== $this->getCoverLetterUrl()) {
-            $this->coverLetterfileUrl = '/images/contacts/' . $this->getCoverLetterUrl();
+            $this->coverLetterFileUrl = '/images/contacts/' . $this->getCoverLetterUrl();
         } else {
-            $this->coverLetterfileUrl = null;
+            $this->coverLetterFileUrl = null;
         }
 
         return $this;

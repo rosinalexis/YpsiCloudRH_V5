@@ -4,6 +4,7 @@ namespace App\Email;
 
 use App\Entity\User;
 use Twig\Environment;
+use App\Entity\Contact;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;
 
@@ -35,6 +36,20 @@ class Mailer
             ->from('botgerome@ypsicloudrh.com')
             ->to("alexisbotdev@gmail.com")
             ->subject('Votre compte Ypsi Cloud RH est en attente d\'activation !')
+            ->html($body, 'text\html');
+
+        $this->mailer->send($message);
+    }
+
+    public function sendReceiptConfirmationMail(Contact $contact)
+    {
+
+        $body = $this->twig->render('email/receipt_confirmation.html.twig');
+
+        $message = (new Email())
+            ->from('yspicloudrh@ypsicloudrh.com')
+            ->to("alexisbotdev@gmail.com")
+            ->subject("Accusé de réception de votre candidature")
             ->html($body, 'text\html');
 
         $this->mailer->send($message);
