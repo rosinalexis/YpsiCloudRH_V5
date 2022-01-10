@@ -5,6 +5,7 @@ namespace App\Security;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserConfirmationService
 {
@@ -18,15 +19,22 @@ class UserConfirmationService
      */
     private $em;
 
+    /**
+     * @var PasswordHasherInterface
+     */
+    private $passwordHasher;
+
     public function __construct(
         UserRepository $userRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher,
     ) {
         $this->userRepo = $userRepository;
         $this->em = $em;
+        $this->passwordHasher = $passwordHasher;
     }
 
-    public function confirmUser(string $confirmationToken)
+    public function confirmUser(string $confirmationToken, string $plainPassword)
     {
 
         $user = $this->userRepo->findOneBy(
@@ -40,6 +48,16 @@ class UserConfirmationService
         $user->setIsActivated(true);
         $user->setConfirmationToken(null);
 
+        // hash du mot de passe de l'utilisateur
+        $user->setPassword(
+            $this->passwordHasher->hashPassword(
+                $user,
+                $plainPassword
+            )
+        );
+
         $this->em->flush();
+
+        return $user;
     }
 }
