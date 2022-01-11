@@ -105,7 +105,7 @@ class JobAdvert
      * @ORM\Column(type="text", nullable=true)
      */
     #[
-        Groups(['read:jobAdvert:item', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
+        Groups(['read:jobAdvert:item', 'read:jobAdvert:collection', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
     ]
     private $description;
 
