@@ -34,7 +34,8 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
 
             $management = [
                 "receiptConfirmation" => [
-                    "state" => false
+                    "state" => false,
+                    "isDone" => false
                 ],
                 "contactAdministrationValidation" => [
                     "state" => false,
@@ -59,7 +60,8 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
                     "state" => false,
                     "equipmentList" => []
                 ],
-                "notes" => ""
+                "notes" => "",
+                "history" => []
             ];
 
             $data->setManagement($management);
@@ -68,10 +70,15 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
 
         if ($data instanceof Contact && (($context['item_operation_name'] ?? null) === 'put')) {
 
-            if ($data->getManagement()["receiptConfirmation"]["state"]) {
-
+            if ($data->getManagement()["receiptConfirmation"]["state"] && !$data->getManagement()["receiptConfirmation"]["isDone"]) {
                 //envoyer le mail
                 $this->_mailer->sendReceiptConfirmationMail($data);
+
+                //reset du management
+                $management = $data->getManagement();
+                $management["receiptConfirmation"]["isDone"] = true;
+
+                $data->setManagement($management);
             }
         }
 
