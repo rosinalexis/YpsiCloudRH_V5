@@ -2,13 +2,15 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Category;
 use Faker\Factory;
 use App\Entity\Job;
 use App\Entity\User;
 use App\Entity\Image;
-use App\Entity\JobAdvert;
 use App\Entity\Profile;
+use App\Entity\Category;
+use App\Entity\JobAdvert;
+
+use App\Entity\Establishment;
 use App\Security\TokenGenerator;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -29,6 +31,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $this->loadEstablishment($manager);
         $this->loadCategory($manager);
         $this->loadJobAdvert($manager);
         $this->loadJob($manager);
@@ -38,20 +41,39 @@ class AppFixtures extends Fixture
 
     public function laodUser(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 15; $i++) {
             $user  = new User;
             $user->setEmail($this->faker->email())
                 ->setRoles(USER::ROLE_USER)
                 ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
                 ->setIsActivated($this->faker->randomElement([true, false]))
                 ->setProfile($this->getReference("profile$i"))
-                ->setJob($this->getReference("job$i"));
+                ->setJob($this->getReference("job$i"))
+                ->addEstablishment($this->getReference("establishment" . rand(0, 2)));
 
             if (!$user->getIsActivated()) {
                 $user->setConfirmationToken(
                     $this->tokenGenerator->getRandomeSecureToken()
                 );
             }
+
+            // switch ($i) {
+            //     case $i < 5:
+            //         $user->addEstablishment($this->getReference("establishment0"));
+            //         break;
+
+            //     case $i > 5 && $i < 10:
+            //         $user->addEstablishment($this->getReference("establishment1"));
+            //         break;
+
+            //     case $i > 10:
+            //         $user->addEstablishment($this->getReference("establishment2"));
+            //         break;
+
+            //     default:
+            //         $user->addEstablishment($this->getReference("establishment0"));
+            //         break;
+            // }
             $manager->persist($user);
             $manager->flush();
         }
@@ -60,7 +82,10 @@ class AppFixtures extends Fixture
         $user->setEmail('admin@admin.fr')
             ->setRoles(USER::ROLE_ADMIN)
             ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
-            ->setIsActivated(true);
+            ->setIsActivated(true)
+            ->addEstablishment($this->getReference("establishment0"))
+            ->addEstablishment($this->getReference("establishment1"))
+            ->addEstablishment($this->getReference("establishment2"));
         $manager->persist($user);
         $manager->flush();
 
@@ -68,7 +93,9 @@ class AppFixtures extends Fixture
         $user->setEmail('testman@test.fr')
             ->setRoles(['ROLE_USER'])
             ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
-            ->setIsActivated(true);
+            ->setIsActivated(true)
+            ->addEstablishment($this->getReference("establishment0"));
+
 
         $manager->persist($user);
         $manager->flush();
@@ -76,7 +103,7 @@ class AppFixtures extends Fixture
 
     public function loadProfile(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 15; $i++) {
             $profile = new Profile;
             $profile->setFirstname($this->faker->firstName())
                 ->setLastname($this->faker->lastName())
@@ -95,11 +122,11 @@ class AppFixtures extends Fixture
 
     public function loadJob(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 15; $i++) {
             $job = new Job();
             $job->setTitle($this->faker->jobTitle())
                 ->setDescription($this->faker->realText())
-                ->setCategory($this->getReference("category$i"));
+                ->setCategory($this->getReference("category" . $this->faker->randomElement([0, 1, 2, 3, 4])));
 
             $manager->persist($job);
             $manager->flush();
@@ -149,6 +176,24 @@ class AppFixtures extends Fixture
 
             $manager->persist($jobAdvert);
             $manager->flush();
+        }
+    }
+
+    public function loadEstablishment(ObjectManager $manager): void
+    {
+        for ($i = 0; $i < 3; $i++) {
+            $establishment = new Establishment();
+            $establishment->setSiret($this->faker->siret())
+                ->setName($this->faker->company())
+                ->setPhone($this->faker->phoneNumber())
+                ->setDepartmentName($this->faker->departmentName())
+                ->setDepartmentNumber($this->faker->departmentNumber())
+                ->setRegion($this->faker->region());
+
+            $manager->persist($establishment);
+            $manager->flush();
+
+            $this->setReference("establishment$i", $establishment);
         }
     }
 }

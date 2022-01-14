@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Controller\CurrentUserAction;
@@ -196,10 +198,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:user:collection', 'write:user:collection'])]
     private $job;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Establishment::class, inversedBy="users")
+     */
+    #[Groups([
+        'read:user:collection',
+        'write:user:collection'
+    ]),]
+    private $establishment;
+
 
     public function __construct()
     {
         $this->confirmationToken = null;
+        $this->establishment = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -442,6 +454,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setJob(?Job $job): self
     {
         $this->job = $job;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Establishment[]
+     */
+    public function getEstablishment(): Collection
+    {
+        return $this->establishment;
+    }
+
+    public function addEstablishment(Establishment $establishment): self
+    {
+        if (!$this->establishment->contains($establishment)) {
+            $this->establishment[] = $establishment;
+        }
+
+        return $this;
+    }
+
+    public function removeEstablishment(Establishment $establishment): self
+    {
+        $this->establishment->removeElement($establishment);
 
         return $this;
     }
