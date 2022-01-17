@@ -102,4 +102,18 @@ class Mailer
         $this->mailer->send($message);
         $fs->remove(array('file', $tmpFolder, $fileName));
     }
+
+
+    public function sendMeetingMailV2(Contact $contact)
+    {
+        $body = $this->twig->render('email/date_confirmation.html.twig', ['contact' => $contact]);
+
+        $message = (new Email())
+            ->from('yspicloudrh@ypsicloudrh.com')
+            ->to("alexisbotdev@gmail.com")
+            ->subject("Demande de date de rendez vous pour entretien")
+            ->html($body, 'text\html');
+
+        $this->mailer->send($message);
+    }
 }

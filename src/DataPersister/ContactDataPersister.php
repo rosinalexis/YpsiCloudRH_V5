@@ -43,7 +43,10 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
                 ],
                 "contactAdministrationMeeting" => [
                     "state" => false,
-                    "supervisor" => null
+                    "supervisor" => null,
+                    "proposedDates" => [],
+                    "sendEmailOk" => false,
+                    "isDone" => false
                 ],
                 "contactAdministrationHelp" => [
                     "state" => false,
@@ -70,13 +73,32 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
 
         if ($data instanceof Contact && (($context['item_operation_name'] ?? null) === 'put')) {
 
-            if ($data->getManagement()["receiptConfirmation"]["state"] && !$data->getManagement()["receiptConfirmation"]["isDone"]) {
+            //dans le cas d'un accusé de récéption
+            if (
+                $data->getManagement()["receiptConfirmation"]["state"]
+                && !$data->getManagement()["receiptConfirmation"]["isDone"]
+            ) {
                 //envoyer le mail
                 $this->_mailer->sendReceiptConfirmationMail($data);
 
                 //reset du management
                 $management = $data->getManagement();
                 $management["receiptConfirmation"]["isDone"] = true;
+
+                $data->setManagement($management);
+            }
+
+            //dans le cas d'une demande de date
+            if (
+                $data->getManagement()["contactAdministrationMeeting"]["proposedDates"]
+                && $data->getManagement()["contactAdministrationMeeting"]["sendEmailOk"]
+                && !$data->getManagement()["contactAdministrationMeeting"]["isDone"]
+            ) {
+                $this->_mailer->sendMeetingMailV2($data);
+
+                //reset du management
+                $management = $data->getManagement();
+                $management["contactAdministrationMeeting"]["isDone"] = true;
 
                 $data->setManagement($management);
             }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Email\Mailer;
+use App\Entity\Contact;
 use App\Form\NewPasswordType;
 use Symfony\Component\Finder\Finder;
 use App\Security\UserConfirmationService;
@@ -49,10 +50,10 @@ class DefaultController extends AbstractController
     }
 
 
-    #[Route("api/meeting/email", name: "default_meeting_email")]
-    public function confirmMettingEmail(Mailer $mailer)
+    #[Route("api/meeting/email/{id}", name: "default_meeting_email")]
+    public function confirmMettingEmail(Contact $contact, Mailer $mailer)
     {
-        $mailer->sendMeetingMail();
+        $mailer->sendMeetingMailV2($contact);
 
         return new JsonResponse('ok', Response::HTTP_OK);
     }
