@@ -7,6 +7,7 @@ use App\Entity\Contact;
 use App\Form\NewPasswordType;
 use Symfony\Component\Finder\Finder;
 use App\Security\UserConfirmationService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -56,5 +57,30 @@ class DefaultController extends AbstractController
         $mailer->sendMeetingMailV2($contact);
 
         return new JsonResponse('ok', Response::HTTP_OK);
+    }
+
+    #[Route("validate/date/{id}/{uid}", name: "default_date_validation")]
+    public function contactDateValidation(Contact  $contact, string $uid,  EntityManagerInterface $em)
+    {
+        $meetingDate = null;
+
+        //vérifier si une date n'a pas été sélectionnée.
+        foreach ($contact->getManagement()["contactAdministrationMeeting"]["proposedDates"] as $key => $dateValue) {
+
+            if ($dateValue["isOk"]) {
+                $meetingDate = $dateValue["newDate"];
+            }
+
+            if ($dateValue["uid"]  == $uid) {
+                $newManagement = $contact->getManagement();
+                $newManagement["contactAdministrationMeeting"]["proposedDates"][$key]["isOk"] = true;
+                $contact->setManagement($newManagement);
+                $em->flush();
+
+                $meetingDate = $dateValue["newDate"];
+            }
+        }
+
+        return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
     }
 }

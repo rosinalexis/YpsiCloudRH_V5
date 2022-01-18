@@ -76,7 +76,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
             //dans le cas d'un accusé de récéption
             if (
                 $data->getManagement()["receiptConfirmation"]["state"]
-                && !$data->getManagement()["receiptConfirmation"]["isDone"]
+                && $data->getManagement()["receiptConfirmation"]["isDone"] == false
             ) {
                 //envoyer le mail
                 $this->_mailer->sendReceiptConfirmationMail($data);
@@ -92,7 +92,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
             if (
                 $data->getManagement()["contactAdministrationMeeting"]["proposedDates"]
                 && $data->getManagement()["contactAdministrationMeeting"]["sendEmailOk"]
-                && !$data->getManagement()["contactAdministrationMeeting"]["isDone"]
+                && $data->getManagement()["contactAdministrationMeeting"]["isDone"] == false
             ) {
                 $this->_mailer->sendMeetingMailV2($data);
 

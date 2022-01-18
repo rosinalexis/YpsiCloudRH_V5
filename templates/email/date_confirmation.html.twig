@@ -12,25 +12,34 @@
 			<h1 class="text-uppercase">Confirmation de rendez-vous avec le service RH de YPSI</h1>
 
 			<p>
-				{{contact.lastname}}<br/>
+				Bonjour
+				{{ contact.lastname|capitalize }},<br/>
 
-				Bonjour, je vous écris pour confirmer d'un rendez-vous en entretien téléhponique ou en visio.<br/>
+				Je vous écris pour confirmer d'un rendez-vous en entretien téléhponique ou en visio.<br/>
 				Merci de bien vouloir séléctionner une date dans la liste suivante :
+				<br/>
+				<br/>
 
 				{% if contact.management.contactAdministrationMeeting.proposedDates %}
 
 					{% for item in contact.management.contactAdministrationMeeting.proposedDates %}
-						-
-						{{item.newDate}}
+
+						<a href="{{ url("default_date_validation", {'id':contact.id, 'uid':item.uid})}}">
+							-
+							{{item.newDate | date("d/m/Y H:i:s")}}
+						</a>
 						<br/>
+
 					{% endfor %}
 				{% endif %}
 
+				<br/>
+				<br/>
 				Une fois votre date sélectionnée, merci de bien vouloir cliquer sur le lien (nombre de tentative : 1).<br/>
 				Notre agenda sera alors automatiquement mis à jour.
 				<br/>
 
-				Au plaisir de vous y rencontrer.<br/>
+				Au plaisir de vous y rencontrer.<br/><br/>
 
 				<strong>YPSI CLOUD RH</strong>
 			</p>
