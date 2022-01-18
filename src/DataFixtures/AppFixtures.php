@@ -11,6 +11,7 @@ use App\Entity\Category;
 use App\Entity\JobAdvert;
 
 use App\Entity\Establishment;
+use App\Entity\Setting;
 use App\Security\TokenGenerator;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;

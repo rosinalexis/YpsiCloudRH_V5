@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     collectionOperations: [
         'get' => [
             "security" => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
-            "security_message" => "Only User can add show Job.",
+            "security_message" => "Only User can show Job.",
         ],
         'post' => [
             "denormalization_context" => ['groups' => ['write:job:collection']],
@@ -62,7 +62,7 @@ class Job
     #[
         Groups(['read:job:collection', 'read:user:collection', 'write:job:collection', 'write:user:collection']),
         Assert\NotBlank(),
-        Assert\Length(min: 5)
+
     ]
     private $title;
 
