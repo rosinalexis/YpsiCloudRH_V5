@@ -50,7 +50,8 @@ class AppFixtures extends Fixture
                 ->setIsActivated($this->faker->randomElement([true, false]))
                 ->setProfile($this->getReference("profile$i"))
                 ->setJob($this->getReference("job$i"))
-                ->addEstablishment($this->getReference("establishment" . rand(0, 2)));
+                ->addEstablishment($this->getReference("establishment" . rand(0, 2)))
+                ->setCurrentEstablishment($user->getEstablishment()[0]->getId());
 
             if (!$user->getIsActivated()) {
                 $user->setConfirmationToken(
@@ -58,23 +59,6 @@ class AppFixtures extends Fixture
                 );
             }
 
-            // switch ($i) {
-            //     case $i < 5:
-            //         $user->addEstablishment($this->getReference("establishment0"));
-            //         break;
-
-            //     case $i > 5 && $i < 10:
-            //         $user->addEstablishment($this->getReference("establishment1"));
-            //         break;
-
-            //     case $i > 10:
-            //         $user->addEstablishment($this->getReference("establishment2"));
-            //         break;
-
-            //     default:
-            //         $user->addEstablishment($this->getReference("establishment0"));
-            //         break;
-            // }
             $manager->persist($user);
             $manager->flush();
         }
@@ -86,7 +70,8 @@ class AppFixtures extends Fixture
             ->setIsActivated(true)
             ->addEstablishment($this->getReference("establishment0"))
             ->addEstablishment($this->getReference("establishment1"))
-            ->addEstablishment($this->getReference("establishment2"));
+            ->addEstablishment($this->getReference("establishment2"))
+            ->setCurrentEstablishment($user->getEstablishment()[0]->getId());
         $manager->persist($user);
         $manager->flush();
 
@@ -95,9 +80,8 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_USER'])
             ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
             ->setIsActivated(true)
-            ->addEstablishment($this->getReference("establishment0"));
-
-
+            ->addEstablishment($this->getReference("establishment0"))
+            ->setCurrentEstablishment($user->getEstablishment()[0]->getId());
         $manager->persist($user);
         $manager->flush();
     }
@@ -182,17 +166,48 @@ class AppFixtures extends Fixture
 
     public function loadEstablishment(ObjectManager $manager): void
     {
+
+
+        $configuration = [
+            "equipmentConfig" => [
+                [
+                    "title" => "Informatique",
+                    "equipments" => ["ordinateur", "souris", "tableau"]
+                ],
+                [
+                    "title" => "Marketing",
+                    "equipments" => ["ordinateur mac", "souris", "tableau"]
+                ]
+            ],
+
+            "documentConfig" => [
+                [
+                    "title" => "Droit à l'image",
+                    "section" => "Droit à l'image",
+                    "content" => "Contenu  de l'application"
+                ]
+            ],
+            "helpDocumentConfig" => [
+                [
+                    "title" => "test aide 1",
+                    "helpType" => "test aide regionnale",
+                    "description" => "test de description"
+                ]
+            ],
+        ];
         for ($i = 0; $i < 3; $i++) {
             $establishment = new Establishment();
             $establishment->setSiret($this->faker->siret())
                 ->setName($this->faker->company())
                 ->setPhone($this->faker->phoneNumber())
                 ->setDepartmentName($this->faker->departmentName())
-                ->setDepartmentNumber($this->faker->departmentNumber())
+                ->setDepartmentNumber(intval($this->faker->departmentNumber()))
+                ->setSetting($configuration)
                 ->setRegion($this->faker->region());
 
             $manager->persist($establishment);
             $manager->flush();
+
 
             $this->setReference("establishment$i", $establishment);
         }

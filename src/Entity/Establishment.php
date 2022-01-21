@@ -54,7 +54,7 @@ class Establishment
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:establishment:collection',])]
+    #[Groups(['read:establishment:collection',  'read:user:collection'])]
     private $id;
 
     /**
@@ -71,7 +71,7 @@ class Establishment
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:collection', 'write:establishment:collection']),
+        Groups(['read:establishment:collection',  'read:user:collection', 'write:establishment:collection']),
         Assert\NotBlank(),
         Assert\Length(min: 2)
     ]
@@ -125,7 +125,7 @@ class Establishment
     /**
      * @ORM\Column(type="json")
      */
-    #[Groups(['read:establishment:item', 'put:establishment:item'])]
+    #[Groups(['read:establishment:collection', 'put:establishment:item'])]
     private $setting = [];
 
     /**

@@ -207,6 +207,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ]),]
     private $establishment;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    #[Groups([
+        'read:user:collection',
+        'write:user:collection',
+        'write:user:put'
+    ]),]
+    private $currentEstablishment;
+
 
     public function __construct()
     {
@@ -478,6 +488,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeEstablishment(Establishment $establishment): self
     {
         $this->establishment->removeElement($establishment);
+
+        return $this;
+    }
+
+    public function getCurrentEstablishment(): ?int
+    {
+        return $this->currentEstablishment;
+    }
+
+    public function setCurrentEstablishment(?int $currentEstablishment): self
+    {
+        $this->currentEstablishment = $currentEstablishment;
 
         return $this;
     }

@@ -64,22 +64,34 @@ class DefaultController extends AbstractController
     {
         $meetingDate = null;
 
-        //vérifier si une date n'a pas été sélectionnée.
-        foreach ($contact->getManagement()["contactAdministrationMeeting"]["proposedDates"] as $key => $dateValue) {
+        if ($contact->getManagement()["contactAdministrationMeeting"]["isUserValidation"]) {
+            //vérifier si une date n'a pas été sélectionnée.
+            foreach ($contact->getManagement()["contactAdministrationMeeting"]["proposedDates"] as $key => $dateValue) {
 
-            if ($dateValue["isOk"]) {
-                $meetingDate = $dateValue["newDate"];
+                if ($dateValue["isOk"]) {
+                    $meetingDate = $dateValue["newDate"];
+                }
             }
+        } else {
 
-            if ($dateValue["uid"]  == $uid) {
-                $newManagement = $contact->getManagement();
-                $newManagement["contactAdministrationMeeting"]["proposedDates"][$key]["isOk"] = true;
-                $contact->setManagement($newManagement);
-                $em->flush();
+            //vérifier si une date n'a pas été sélectionnée.
+            foreach ($contact->getManagement()["contactAdministrationMeeting"]["proposedDates"] as $key => $dateValue) {
 
-                $meetingDate = $dateValue["newDate"];
+
+                if ($dateValue["uid"]  == $uid && !$dateValue["isOk"]) {
+                    $newManagement = $contact->getManagement();
+                    $newManagement["contactAdministrationMeeting"]["proposedDates"][$key]["isOk"] = true;
+                    $newManagement["contactAdministrationMeeting"]["isUserValidation"]  = true;
+
+                    $contact->setManagement($newManagement);
+                    $contact->setState("Réponse du candidat ok.");
+                    $em->flush();
+
+                    $meetingDate = $dateValue["newDate"];
+                }
             }
         }
+
 
         return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
     }

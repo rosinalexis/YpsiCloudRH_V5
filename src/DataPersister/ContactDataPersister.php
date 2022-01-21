@@ -46,7 +46,8 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
                     "supervisor" => null,
                     "proposedDates" => [],
                     "sendEmailOk" => false,
-                    "isDone" => false
+                    "isDone" => false,
+                    "isUserValidation" => false
                 ],
                 "contactAdministrationHelp" => [
                     "state" => false,
