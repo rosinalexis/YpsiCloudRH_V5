@@ -157,7 +157,8 @@ class AppFixtures extends Fixture
                 ->setPublished($this->faker->randomElement([true, false]))
                 ->setCategory($this->getReference("category$i"))
                 ->setTasks(["task1", "task2", "task3"])
-                ->setRequirements(["requirement1", "requirement2", "requirement3"]);
+                ->setRequirements(["requirement1", "requirement2", "requirement3"])
+                ->setEstablishment($this->getReference("establishment" . rand(0, 2)));
 
             $manager->persist($jobAdvert);
             $manager->flush();
@@ -167,8 +168,26 @@ class AppFixtures extends Fixture
     public function loadEstablishment(ObjectManager $manager): void
     {
 
-
         $configuration = [
+            "emailTemplate" => [
+                [
+                    "title" => "email v2",
+                    "status" => false,
+                    "content" => [
+                        "ops" => []
+                    ],
+                    "htmlContent" => "<p>Bonjour  %user%, </p> <br/> <p>je suis la version 1</p> <br/> <p>cordialement</p>"
+                ],
+                [
+                    "title" => "email v1",
+                    "status" => false,
+                    "content" => [
+                        "ops" => []
+                    ],
+                    "htmlContent" => "<p>Bonjour  %user%, </p> <br/> <p>je suis la version 2</p> <br/> <p>cordialement</p>"
+                ]
+
+            ],
             "equipmentConfig" => [
                 [
                     "title" => "Informatique",
@@ -195,10 +214,11 @@ class AppFixtures extends Fixture
                 ]
             ],
         ];
+
         for ($i = 0; $i < 3; $i++) {
             $establishment = new Establishment();
             $establishment->setSiret($this->faker->siret())
-                ->setName($this->faker->company())
+                ->setName("Etablissement N° $i")
                 ->setPhone($this->faker->phoneNumber())
                 ->setDepartmentName($this->faker->departmentName())
                 ->setDepartmentNumber(intval($this->faker->departmentNumber()))
@@ -207,7 +227,6 @@ class AppFixtures extends Fixture
 
             $manager->persist($establishment);
             $manager->flush();
-
 
             $this->setReference("establishment$i", $establishment);
         }

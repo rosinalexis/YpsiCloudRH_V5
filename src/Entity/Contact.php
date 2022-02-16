@@ -429,4 +429,10 @@ class Contact
 
         return $this;
     }
+
+    public function getFullName(): ?string
+    {
+
+        return $this->getLastname() . ' ' . $this->getFirstname();
+    }
 }

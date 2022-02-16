@@ -116,4 +116,42 @@ class Mailer
 
         $this->mailer->send($message);
     }
+
+    public function sendMeetingMailV3(Contact $contact)
+    {
+        $today = date("d.m.y");
+
+        $email = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
+
+        //l'email par defaut 
+        $body = $this->twig->render('email/receipt_confirmation.html.twig');
+
+        if ($email) {
+            foreach ($email as $emailTrans) {
+                if ($emailTrans["status"]) {
+                    //traitement du message remplacement par les valeurs
+
+                    $myEmailTemplate = $emailTrans["htmlContent"];
+
+                    //recherche et remplacement de la variable user
+                    if (str_contains($myEmailTemplate, "%user%")) {
+                        $myEmailTemplate = str_replace("%user%",  $contact->getFullName(), $myEmailTemplate);
+                    }
+
+                    if (str_contains($myEmailTemplate, "%date%")) {
+                        $myEmailTemplate = str_replace("%date%", $today, $myEmailTemplate);
+                    }
+
+                    $body = $this->twig->render('email/test_email.html.twig', ['name' => $myEmailTemplate]);
+                }
+            }
+        }
+        $message = (new Email())
+            ->from('yspicloudrh@ypsicloudrh.com')
+            ->to("alexisbotdev@gmail.com")
+            ->subject("Demande de date de rendez vous pour entretien")
+            ->html($body, 'text\html');
+
+        $this->mailer->send($message);
+    }
 }

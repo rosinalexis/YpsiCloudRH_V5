@@ -203,7 +203,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[Groups([
         'read:user:collection',
-        'write:user:collection'
+        'write:user:collection',
+        'write:user:put'
     ]),]
     private $establishment;
 

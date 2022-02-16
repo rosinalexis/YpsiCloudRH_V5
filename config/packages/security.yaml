@@ -65,7 +65,7 @@ security:
     - { path: ^/api/contacts, roles: PUBLIC_ACCESS }
     - { path: ^/api/docs, roles: PUBLIC_ACCESS }
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
-    - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/api, roles:  IS_AUTHENTICATED_FULLY }
     - { path: ^/api/users/confirm, roles: PUBLIC_ACCESS }
 
     # - { path: ^/admin, roles: ROLE_ADMIN }

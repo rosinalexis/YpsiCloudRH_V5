@@ -54,7 +54,7 @@ class Establishment
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:establishment:collection',  'read:user:collection'])]
+    #[Groups(['read:establishment:collection', 'read:contact:collection', 'read:jobAdvert:collection',  'read:user:collection'])]
     private $id;
 
     /**
@@ -71,7 +71,7 @@ class Establishment
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:collection',  'read:user:collection', 'write:establishment:collection']),
+        Groups(['read:establishment:collection', 'read:contact:collection', 'read:jobAdvert:collection',  'read:user:collection', 'write:establishment:collection']),
         Assert\NotBlank(),
         Assert\Length(min: 2)
     ]
@@ -140,10 +140,17 @@ class Establishment
     #[Groups(['read:establishment:item'])]
     private $updatedAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity=JobAdvert::class, mappedBy="establishment")
+     */
+    #[Groups(['read:establishment:item'])]
+    private $jobAdverts;
+
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->jobAdverts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -297,5 +304,35 @@ class Establishment
         }
 
         $this->setUpdatedAt(new \DateTimeImmutable);
+    }
+
+    /**
+     * @return Collection|JobAdvert[]
+     */
+    public function getJobAdverts(): Collection
+    {
+        return $this->jobAdverts;
+    }
+
+    public function addJobAdvert(JobAdvert $jobAdvert): self
+    {
+        if (!$this->jobAdverts->contains($jobAdvert)) {
+            $this->jobAdverts[] = $jobAdvert;
+            $jobAdvert->setEstablishment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobAdvert(JobAdvert $jobAdvert): self
+    {
+        if ($this->jobAdverts->removeElement($jobAdvert)) {
+            // set the owning side to null (unless already changed)
+            if ($jobAdvert->getEstablishment() === $this) {
+                $jobAdvert->setEstablishment(null);
+            }
+        }
+
+        return $this;
     }
 }

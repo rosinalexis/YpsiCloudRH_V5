@@ -155,6 +155,12 @@ class JobAdvert
     #[Groups(['read:jobAdvert:item', 'write:jobAdvert:collection'])]
     private $category;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Establishment::class, inversedBy="jobAdverts")
+     */
+    #[Groups(['read:jobAdvert:collection', 'read:contact:collection', 'write:jobAdvert:collection'])]
+    private $establishment;
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
@@ -348,6 +354,18 @@ class JobAdvert
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    public function setEstablishment(?Establishment $establishment): self
+    {
+        $this->establishment = $establishment;
 
         return $this;
     }

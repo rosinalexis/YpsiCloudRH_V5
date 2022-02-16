@@ -5,15 +5,16 @@ namespace App\Controller;
 use App\Email\Mailer;
 use App\Entity\Contact;
 use App\Form\NewPasswordType;
-use Symfony\Component\Finder\Finder;
+
 use App\Security\UserConfirmationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpKernel\KernelInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class DefaultController extends AbstractController
 {
@@ -92,7 +93,16 @@ class DefaultController extends AbstractController
             }
         }
 
-
         return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
+    }
+
+
+    #[Route("/test/email", name: "test_email_api")]
+    public function testEmailApi(TokenStorageInterface $tokenStorageInterface)
+    {
+        dd($tokenStorageInterface->getToken());
+        return $this->render('email/test_email.html.twig', [
+            "name" => "<p><strong>je suis ici dans mon template</strong> je suis la</p> "
+        ]);
     }
 }
