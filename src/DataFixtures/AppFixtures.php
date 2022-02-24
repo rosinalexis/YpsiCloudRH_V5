@@ -171,16 +171,18 @@ class AppFixtures extends Fixture
         $configuration = [
             "emailTemplate" => [
                 [
-                    "title" => "email v2",
+                    "title" => "template accusé de réception",
                     "status" => false,
+                    "object" => " accusé de réception test",
                     "content" => [
                         "ops" => []
                     ],
                     "htmlContent" => "<p>Bonjour  %user%, </p> <br/> <p>je suis la version 1</p> <br/> <p>cordialement</p>"
                 ],
                 [
-                    "title" => "email v1",
+                    "title" => "template de date",
                     "status" => false,
+                    "object" => "template accusé de réception date",
                     "content" => [
                         "ops" => []
                     ],

@@ -81,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:user:collection'])]
+    #[Groups(['read:user:collection', 'read:job:collection'])]
     private $id;
 
     /**
@@ -204,6 +204,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups([
         'read:user:collection',
         'write:user:collection',
+        'read:job:collection',
         'write:user:put'
     ]),]
     private $establishment;

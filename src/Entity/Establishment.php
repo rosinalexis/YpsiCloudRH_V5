@@ -54,7 +54,7 @@ class Establishment
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:establishment:collection', 'read:contact:collection', 'read:jobAdvert:collection',  'read:user:collection'])]
+    #[Groups(['read:establishment:collection', 'read:contact:collection', 'read:job:collection', 'read:jobAdvert:collection',  'read:user:collection'])]
     private $id;
 
     /**
@@ -71,7 +71,7 @@ class Establishment
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:collection', 'read:contact:collection', 'read:jobAdvert:collection',  'read:user:collection', 'write:establishment:collection']),
+        Groups(['read:establishment:collection', 'read:job:collection', 'read:contact:collection', 'read:jobAdvert:collection',  'read:user:collection', 'write:establishment:collection']),
         Assert\NotBlank(),
         Assert\Length(min: 2)
     ]

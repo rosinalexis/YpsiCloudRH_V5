@@ -106,12 +106,56 @@ class Mailer
 
     public function sendMeetingMailV2(Contact $contact)
     {
+        //l'email par defaut
         $body = $this->twig->render('email/date_confirmation.html.twig', ['contact' => $contact]);
+
+        $emailObject = '';
+
+
+        //check si un template email est activé
+        $email = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
+        if ($email) {
+            foreach ($email as $emailTrans) {
+                if (($emailTrans["title"] == "template de date") && $emailTrans["status"]) {
+
+                    //récuperation de la liste de date
+                    $userMeetingDate = $contact->getManagement()["contactAdministrationMeeting"]["proposedDates"];
+                    $lstDates = "";
+
+                    foreach ($userMeetingDate as $date) {
+
+                        $contactID = $contact->getId();
+                        $dateUID =  $date["uid"];
+                        $datePropostion = date_format(date_create($date["newDate"]), 'Y-m-d H:i:s');
+                        $dateTrans = "<a href=\"https://127.0.0.1:8000/validate/date/$contactID/$dateUID\"target=\"_blank\"> - $datePropostion </a> <br/>";
+
+                        $lstDates = $lstDates . " " . $dateTrans;
+                    }
+
+                    //traitement du message remplacement par les valeurs
+                    $myEmailTemplate = $emailTrans["htmlContent"];
+
+                    //recherche et remplacement de la variable user
+                    if (str_contains($myEmailTemplate, "%user%")) {
+                        $myEmailTemplate = str_replace("%user%",  $contact->getFullName(), $myEmailTemplate);
+                    }
+
+                    if (str_contains($myEmailTemplate, "%date%")) {
+                        $myEmailTemplate = str_replace("%date%",  $lstDates, $myEmailTemplate);
+                    }
+
+                    //traitement de l'object de l'email
+                    $emailObject = $emailTrans["object"];
+                    $body = $this->twig->render('email/test_email.html.twig', ['emailTemplate' => $myEmailTemplate]);
+                }
+            }
+        }
+
 
         $message = (new Email())
             ->from('yspicloudrh@ypsicloudrh.com')
             ->to("alexisbotdev@gmail.com")
-            ->subject("Demande de date de rendez vous pour entretien")
+            ->subject($emailObject ? $emailObject : "Demande de date de rendez vous pour entretien")
             ->html($body, 'text\html');
 
         $this->mailer->send($message);
@@ -120,6 +164,7 @@ class Mailer
     public function sendMeetingMailV3(Contact $contact)
     {
         $today = date("d.m.y");
+        $emailObject = '';
 
         $email = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
 
@@ -128,7 +173,7 @@ class Mailer
 
         if ($email) {
             foreach ($email as $emailTrans) {
-                if ($emailTrans["status"]) {
+                if (($emailTrans["title"] == "template accusé de réception") && $emailTrans["status"]) {
                     //traitement du message remplacement par les valeurs
 
                     $myEmailTemplate = $emailTrans["htmlContent"];
@@ -142,14 +187,17 @@ class Mailer
                         $myEmailTemplate = str_replace("%date%", $today, $myEmailTemplate);
                     }
 
-                    $body = $this->twig->render('email/test_email.html.twig', ['name' => $myEmailTemplate]);
+                    //traitement de l'object de l'email
+                    $emailObject = $emailTrans["object"];
+
+                    $body = $this->twig->render('email/test_email.html.twig', ['emailTemplate' => $myEmailTemplate]);
                 }
             }
         }
         $message = (new Email())
             ->from('yspicloudrh@ypsicloudrh.com')
             ->to("alexisbotdev@gmail.com")
-            ->subject("Demande de date de rendez vous pour entretien")
+            ->subject($emailObject ? $emailObject : "Demande de date de rendez vous pour entretien")
             ->html($body, 'text\html');
 
         $this->mailer->send($message);

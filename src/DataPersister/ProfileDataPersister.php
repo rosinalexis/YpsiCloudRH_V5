@@ -45,7 +45,6 @@ final class ProfileDataPersister implements ContextAwareDataPersisterInterface
         //je remets le profil à null
         $data->getUser()->setProfile(NULL);
 
-
         //enregistement des modifications
         $this->_em->remove($data);
         $this->_em->flush();
