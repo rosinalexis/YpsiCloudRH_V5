@@ -10,11 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=CategoryRepository::class)
- * @ORM\HasLifecycleCallbacks()
- * @ORM\Table(name="categories")
- */
+
+#[
+    ORM\Entity(repositoryClass: CategoryRepository::class),
+    ORM\HasLifecycleCallbacks(),
+    ORM\Table(name: "categories")
+]
 #[ApiResource(
     attributes: ["security" => "is_granted('IS_AUTHENTICATED_FULLY')"],
     normalizationContext: ['groups' => ['read:category:collection']],
@@ -50,17 +51,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Category
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+
+    #[
+        ORM\Id,
+        ORM\GeneratedValue(),
+        ORM\Column(),
+    ]
     #[Groups(['read:category:collection', 'read:user:item'])]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+
+    #[
+        ORM\Column(type: "string", length: 255)
+    ]
     #[
         Groups(['read:category:collection', 'read:job:collection', 'read:user:item', 'write:category:collection']),
         Assert\NotBlank(),
@@ -68,36 +71,32 @@ class Category
     ]
     private $title;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+
+    #[
+        ORM\Column(type: "text", nullable: true)
+    ]
     #[
         Groups(['read:category:collection', 'write:category:collection']),
         Assert\Length(max: 255)
     ]
     private $description;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column(type: "datetime_immutable")]
     #[Groups(['read:category:collection'])]
     private $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+
+    #[ORM\Column(type: "datetime_immutable")]
     #[Groups(['read:category:item'])]
     private $updatedAt;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Job::class, mappedBy="category")
-     */
+
+    #[ORM\OneToMany(targetEntity: Job::class, mappedBy: "category")]
     #[Groups(['read:category:item'])]
     private $jobs;
 
-    /**
-     * @ORM\OneToMany(targetEntity=JobAdvert::class, mappedBy="category", orphanRemoval=true)
-     */
+
+    #[ORM\OneToOne(targetEntity: JobAdvert::class, mappedBy: "category", orphanRemoval: true)]
     #[Groups(['read:category:item'])]
     private $jobAdverts;
 
@@ -160,10 +159,11 @@ class Category
         return $this;
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+
+    #[
+        ORM\PrePersist,
+        ORM\PreUpdate
+    ]
     public function updateTimestamps()
     {
         if ($this->getCreatedAt() === null) {

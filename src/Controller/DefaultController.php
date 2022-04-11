@@ -52,7 +52,7 @@ class DefaultController extends AbstractController
 
 
     #[Route("api/meeting/email/{id}", name: "default_meeting_email")]
-    public function confirmMettingEmail(Contact $contact, Mailer $mailer)
+    public function confirmMetingEmail(Contact $contact, Mailer $mailer)
     {
         $mailer->sendMeetingMailV2($contact);
 
@@ -92,7 +92,8 @@ class DefaultController extends AbstractController
             }
         }
 
-        return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
+        return new JsonResponse('ok', Response::HTTP_OK);
+        //return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
     }
 
 
