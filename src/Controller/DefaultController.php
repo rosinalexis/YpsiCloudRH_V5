@@ -41,7 +41,6 @@ class DefaultController extends AbstractController
                 $userConfirmationService->confirmUser($token, $password);
             }
 
-
             return $this->redirect('http://localhost:8081');
         }
 
@@ -75,7 +74,7 @@ class DefaultController extends AbstractController
             }
         } else {
 
-            //vérifier si une date n'a pas été sélectionnée.
+            //vérifier aucune date n'a été sélectionnée.
             foreach ($contact->getManagement()["contactAdministrationMeeting"]["proposedDates"] as $key => $dateValue) {
 
 

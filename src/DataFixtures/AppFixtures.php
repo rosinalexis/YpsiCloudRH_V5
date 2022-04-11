@@ -188,7 +188,6 @@ class AppFixtures extends Fixture
                     ],
                     "htmlContent" => "<p>Bonjour  %user%, </p> <br/> <p>je suis la version 2</p> <br/> <p>cordialement</p>"
                 ]
-
             ],
             "equipmentConfig" => [
                 [

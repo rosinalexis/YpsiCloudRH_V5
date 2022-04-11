@@ -36,8 +36,8 @@ class Mailer
         ]);
 
         $message = (new Email())
-            ->from('botgerome@ypsicloudrh.com')
-            ->to("alexisbotdev@gmail.com")
+            ->from('rh_dev_2022@ypsi.fr')
+            ->to("ypsi.cloud.rh@gmail.com")
             ->subject('Votre compte Ypsi Cloud RH est en attente d\'activation !')
             ->html($body, 'text\html');
 
@@ -50,8 +50,8 @@ class Mailer
         $body = $this->twig->render('email/receipt_confirmation.html.twig');
 
         $message = (new Email())
-            ->from('yspicloudrh@ypsicloudrh.com')
-            ->to("alexisbotdev@gmail.com")
+            ->from('rh_dev_2022@ypsi.fr')
+            ->to("ypsi.cloud.rh@gmail.com")
             ->subject("Accusé de réception de votre candidature")
             ->html($body, 'text\html');
 
@@ -92,8 +92,8 @@ class Mailer
 
         $body = 'Test meeting...';
         $message = (new Email())
-            ->from('yspicloudrh@ypsicloudrh.com')
-            ->to("alexisbotdev@gmail.com")
+            ->from('rh_dev_2022@ypsi.fr')
+            ->to("ypsi.cloud.rh@gmail.com")
             ->subject("Rendez vous entretien")
             ->text($body)
             ->attachFromPath($tmpFolder . $fileName);
@@ -153,8 +153,8 @@ class Mailer
 
 
         $message = (new Email())
-            ->from('yspicloudrh@ypsicloudrh.com')
-            ->to("alexisbotdev@gmail.com")
+            ->from('rh_dev_2022@ypsi.fr')
+            ->to("ypsi.cloud.rh@gmail.com")
             ->subject($emailObject ? $emailObject : "Demande de date de rendez vous pour entretien")
             ->html($body, 'text\html');
 
@@ -195,8 +195,8 @@ class Mailer
             }
         }
         $message = (new Email())
-            ->from('yspicloudrh@ypsicloudrh.com')
-            ->to("alexisbotdev@gmail.com")
+            ->from('rh_dev_2022@ypsi.fr')
+            ->to("ypsi.cloud.rh@gmail.com")
             ->subject($emailObject ? $emailObject : "Demande de date de rendez vous pour entretien")
             ->html($body, 'text\html');
 

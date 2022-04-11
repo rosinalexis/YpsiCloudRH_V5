@@ -57,7 +57,6 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
             $data->eraseCredentials();
 
             // désactiver le compte par default
-
             $data->setIsActivated(false);
 
             //Creation d'un token pour la connexion

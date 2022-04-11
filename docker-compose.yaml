@@ -6,18 +6,18 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: ypsi_cloud_rh_v5
     ports:
-      - 3306:3306
+      - 44021:3306
     networks:
       - dev
 
   phpmyadmin:
     image: phpmyadmin
-    container_name: phpmyadmin_docker_symfony
+    container_name: phpmyadmin_docker_symfony_serveur
     restart: always
     depends_on:
       - database
     ports:
-      - 8082:80
+      - 44022:80
     environment:
       PMA_HOST: database
     networks:
