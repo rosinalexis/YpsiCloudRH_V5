@@ -21,33 +21,38 @@ class DefaultController extends AbstractController
     #[Route('/', name: 'default_index')]
     public function index(): Response
     {
-        return $this->render('default/home.html.twig');
+        return new JsonResponse(
+            [
+                "title" => "YPSI CLOUD RH V5",
+                "version" => "0.5",
+                "message" => "Welcome To the backend of Ypsi Cloud RH "
+            ],
+            Response::HTTP_OK
+        );
     }
 
-    #[Route("/confirm-user/{token}", name: "default_confirm_token")]
+    #[Route("/confirm-user/{token}", name: "default_confirm_token", methods: ["post"])]
     public function confirmUser(string $token, Request $request, UserConfirmationService $userConfirmationService)
     {
 
-        $form = $this->createForm(NewPasswordType::class);
-        $form->handleRequest($request);
+        //vérification des mots de passe 
+        $password = $request->request->get("new_password_first");
+        $confirmPassword = $request->request->get("new_password_second");
 
-        if ($form->isSubmitted() && $form->isValid()) {
 
-            //vérification on ne sait jamais
-            $password = $request->request->get("new_password")["plainPassword"]["first"];
-            $confirmPassword = $request->request->get("new_password")["plainPassword"]["second"];
-
-            if ($password == $confirmPassword) {
-                $userConfirmationService->confirmUser($token, $password);
-            }
-
-            return $this->redirect('http://localhost:8081');
+        //si les mots de passe son identique
+        if (($password && $confirmPassword) && $password === $confirmPassword) {
+            $userConfirmationService->confirmUser($token, $password);
+            return new JsonResponse([
+                "message" => "mot de passe modifier"
+            ], Response::HTTP_ACCEPTED);
         }
 
-        return $this->render('default/index.html.twig', [
-            'controller_name' => 'DefaultController',
-            'form' => $form->createView()
-        ]);
+        //dans le cas ou il y a une erreur
+        return new JsonResponse([
+            "error" => "les mots de passe sont invalides.",
+            "password" => $password
+        ], Response::HTTP_BAD_REQUEST);
     }
 
 
@@ -56,7 +61,9 @@ class DefaultController extends AbstractController
     {
         $mailer->sendMeetingMailV2($contact);
 
-        return new JsonResponse('ok', Response::HTTP_OK);
+        return new JsonResponse([
+            "email" => "is send"
+        ], Response::HTTP_OK);
     }
 
     #[Route("validate/date/{id}/{uid}", name: "default_date_validation")]
@@ -92,17 +99,10 @@ class DefaultController extends AbstractController
             }
         }
 
-        return new JsonResponse('ok', Response::HTTP_OK);
+        return new JsonResponse([
+            "meeting_date" => $meetingDate
+        ], Response::HTTP_OK);
+
         //return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
-    }
-
-
-    #[Route("/test/email", name: "test_email_api")]
-    public function testEmailApi(TokenStorageInterface $tokenStorageInterface)
-    {
-        dd($tokenStorageInterface->getToken());
-        return $this->render('email/test_email.html.twig', [
-            "name" => "<p><strong>je suis ici dans mon template</strong> je suis la</p> "
-        ]);
     }
 }
