@@ -24,10 +24,12 @@
 
 					{% for item in contact.management.contactAdministrationMeeting.proposedDates %}
 
-						<a href="{{ url("default_date_validation", {'id':contact.id, 'uid':item.uid})}}">
-							-
-							{{item.newDate | date("d/m/Y H:i:s")}}
-						</a>
+						<a href="http://localhost:8080/validate/date/{{contact.id}}/{{item.uid}}" target="_blank">{{item.newDate | date("d/m/Y H:i:s")}}</a>
+
+						{# <a href="{{ url("default_date_validation", {'id':contact.id, 'uid':item.uid})}}">
+																			-
+																			{{item.newDate | date("d/m/Y H:i:s")}}
+																		</a> #}
 						<br/>
 
 					{% endfor %}

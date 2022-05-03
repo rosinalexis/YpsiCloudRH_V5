@@ -84,7 +84,6 @@ class DefaultController extends AbstractController
             //vérifier aucune date n'a été sélectionnée.
             foreach ($contact->getManagement()["contactAdministrationMeeting"]["proposedDates"] as $key => $dateValue) {
 
-
                 if ($dateValue["uid"]  == $uid && !$dateValue["isOk"]) {
                     $newManagement = $contact->getManagement();
                     $newManagement["contactAdministrationMeeting"]["proposedDates"][$key]["isOk"] = true;
@@ -100,7 +99,7 @@ class DefaultController extends AbstractController
         }
 
         return new JsonResponse([
-            "meeting_date" => $meetingDate
+            "meetingDate" => $meetingDate
         ], Response::HTTP_OK);
 
         //return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
