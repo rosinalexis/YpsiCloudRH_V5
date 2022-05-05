@@ -10,8 +10,8 @@ use App\Entity\Contact;
 final class ContactDataPersister implements ContextAwareDataPersisterInterface
 {
 
-    private $_em;
-    private $_mailer;
+    private EntityManagerInterface $_em;
+    private Mailer $_mailer;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -77,7 +77,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
             //dans le cas d'un accusé de récéption
             if (
                 $data->getManagement()["receiptConfirmation"]["state"]
-                && $data->getManagement()["receiptConfirmation"]["isDone"] == false
+                && !$data->getManagement()["receiptConfirmation"]["isDone"]
             ) {
                 //envoyer le mail
                 //$this->_mailer->sendReceiptConfirmationMail($data);
@@ -94,7 +94,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
             if (
                 $data->getManagement()["contactAdministrationMeeting"]["proposedDates"]
                 && $data->getManagement()["contactAdministrationMeeting"]["sendEmailOk"]
-                && $data->getManagement()["contactAdministrationMeeting"]["isDone"] == false
+                && !$data->getManagement()["contactAdministrationMeeting"]["isDone"]
             ) {
                 $this->_mailer->sendMeetingMailV2($data);
 

@@ -16,9 +16,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class DefaultController extends AbstractController
+class HomeController extends AbstractController
 {
-    #[Route('/', name: 'default_index')]
+    #[Route('/', name: 'default_index', methods: ["GET"])]
     public function index(): Response
     {
         return new JsonResponse(
@@ -31,8 +31,8 @@ class DefaultController extends AbstractController
         );
     }
 
-    #[Route("/confirm-user/{token}", name: "default_confirm_token", methods: ["post"])]
-    public function confirmUser(string $token, Request $request, UserConfirmationService $userConfirmationService)
+    #[Route("/confirm-user/{token}", name: "default_confirm_token", methods: ["POST"])]
+    public function confirmUser(string $token, Request $request, UserConfirmationService $userConfirmationService): JsonResponse
     {
 
         //vérification des mots de passe 
@@ -55,9 +55,8 @@ class DefaultController extends AbstractController
         ], Response::HTTP_BAD_REQUEST);
     }
 
-
     #[Route("api/meeting/email/{id}", name: "default_meeting_email")]
-    public function confirmMetingEmail(Contact $contact, Mailer $mailer)
+    public function confirmMetingEmail(Contact $contact, Mailer $mailer): JsonResponse
     {
         $mailer->sendMeetingMailV2($contact);
 
@@ -67,7 +66,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route("validate/date/{id}/{uid}", name: "default_date_validation")]
-    public function contactDateValidation(Contact  $contact, string $uid,  EntityManagerInterface $em)
+    public function contactDateValidation(Contact  $contact, string $uid,  EntityManagerInterface $em): JsonResponse
     {
         $meetingDate = null;
 

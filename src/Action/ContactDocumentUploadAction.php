@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Action;
 
 use App\Entity\Contact;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,10 +10,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ContactDocumentUploadAction extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+
+    private EntityManagerInterface $em;
 
 
     public function __construct(
@@ -23,7 +21,7 @@ class ContactDocumentUploadAction extends AbstractController
     }
 
 
-    public function __invoke(Request $request, Contact $contact)
+    public function __invoke(Request $request, Contact $contact): Contact
     {
         $cvUploadFile = $request->files->get('cvFile');
         $coverLetterUploadFile = $request->files->get('coverLetterFile');

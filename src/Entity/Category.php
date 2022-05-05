@@ -16,8 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="categories")
  */
 #[ApiResource(
-    attributes: ["security" => "is_granted('IS_AUTHENTICATED_FULLY')"],
-    normalizationContext: ['groups' => ['read:category:collection']],
     collectionOperations: [
         'get' => [
             "security" => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
@@ -46,7 +44,9 @@ use Symfony\Component\Validator\Constraints as Assert;
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can delete Category.",
         ]
-    ]
+    ],
+    attributes: ["security" => "is_granted('IS_AUTHENTICATED_FULLY')"],
+    normalizationContext: ['groups' => ['read:category:collection']]
 )]
 class Category
 {

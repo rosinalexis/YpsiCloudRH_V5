@@ -18,7 +18,7 @@ final class UserConfirmationSubscriber implements EventSubscriberInterface
     /**
      * @var UserConfirmationService
      */
-    private $userConfirmationService;
+    private UserConfirmationService $userConfirmationService;
 
     public function __construct(
         UserConfirmationService $userConfirmationService
@@ -26,7 +26,7 @@ final class UserConfirmationSubscriber implements EventSubscriberInterface
         $this->userConfirmationService =  $userConfirmationService;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::VIEW => ['confirmUser', EventPriorities::POST_VALIDATE],

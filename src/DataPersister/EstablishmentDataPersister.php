@@ -9,7 +9,7 @@ use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 final class EstablishmentDataPersister implements ContextAwareDataPersisterInterface
 {
 
-    private $_em;
+    private EntityManagerInterface $_em;
 
 
     public function __construct(EntityManagerInterface $em)

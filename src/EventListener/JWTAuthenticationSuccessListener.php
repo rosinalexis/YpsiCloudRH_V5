@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use Exception;
 use Symfony\Component\HttpFoundation\Cookie;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 
@@ -15,7 +16,7 @@ class JWTAuthenticationSuccessListener
     /**
      * @var int
      */
-    private $tokenLifetime;
+    private int $tokenLifetime;
 
     public function __construct(int $tokenLifetime)
     {

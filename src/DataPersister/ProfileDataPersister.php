@@ -10,8 +10,8 @@ use Symfony\Component\Security\Core\Security;
 
 final class ProfileDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $_em;
-    private $_security;
+    private EntityManagerInterface $_em;
+    private Security $_security;
 
     public function __construct(Security $security, EntityManagerInterface $em)
     {

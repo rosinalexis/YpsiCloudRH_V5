@@ -16,12 +16,12 @@ class Mailer
     /**
      * @var MailerInterface
      */
-    private $mailer;
+    private MailerInterface $mailer;
 
     /**
      * @var Environment
      */
-    private $twig;
+    private Environment $twig;
 
     public function __construct(MailerInterface $mailer, Environment $twig)
     {

@@ -16,7 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="establishments")
  */
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:establishment:collection']],
     collectionOperations: [
         'get' => [
             "security" => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
@@ -45,7 +44,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can delete an establishment.",
         ]
-    ]
+    ],
+    normalizationContext: ['groups' => ['read:establishment:collection']]
 )]
 class Establishment
 {

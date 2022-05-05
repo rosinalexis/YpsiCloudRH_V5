@@ -44,7 +44,7 @@ class ResetPasswordAction extends AbstractController
         $this->_tokenManager = $tokenManager;
     }
 
-    public function __invoke(User $data)
+    public function __invoke(User $data): JsonResponse
     {
         // validation du mot de passe
         $this->_validator->validate($data);

@@ -19,9 +19,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
-    private $passwordHasher;
-    private $faker;
-    private $tokenGenerator;
+    private UserPasswordHasherInterface $passwordHasher;
+    private \Faker\Generator $faker;
+    private TokenGenerator $tokenGenerator;
 
     public function __construct(UserPasswordHasherInterface $passwordHasher, TokenGenerator $tokenGenerator)
     {

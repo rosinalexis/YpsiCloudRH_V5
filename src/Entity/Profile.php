@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProfileRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\ProfileImageUploadAction;
+use App\Action\ProfileImageUploadAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;

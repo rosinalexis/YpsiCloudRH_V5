@@ -15,10 +15,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final class UserDataPersister implements ContextAwareDataPersisterInterface
 {
 
-    private $_em;
-    private $_passwordHasher;
-    private $_tokeGenerator;
-    private $_mailer;
+    private EntityManagerInterface $_em;
+    private UserPasswordHasherInterface $_passwordHasher;
+    private TokenGenerator $_tokeGenerator;
+    private Mailer $_mailer;
 
     public function __construct(
         EntityManagerInterface $em,
