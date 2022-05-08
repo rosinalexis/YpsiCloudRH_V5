@@ -68,6 +68,7 @@ class Profile
     #[
         Groups([
             'read:profile:collection',
+            'read:job:collection',
             'read:user:item'
         ]),
     ]
@@ -80,6 +81,7 @@ class Profile
         Groups([
             'read:profile:collection',
             'read:user:collection',
+            'read:job:collection',
             'write:profile:collection',
             'write:user:collection',
             'read:user:item'
@@ -94,7 +96,10 @@ class Profile
      */
     #[
         Groups([
-            'read:profile:collection', 'write:profile:collection', 'write:user:collection',
+            'read:profile:collection',
+            'read:job:collection',
+            'write:profile:collection',
+            'write:user:collection',
             'read:user:collection'
         ]),
         Assert\Length(min: 5, max: 255),

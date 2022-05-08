@@ -22,6 +22,7 @@ class AppFixtures extends Fixture
     private UserPasswordHasherInterface $passwordHasher;
     private \Faker\Generator $faker;
     private TokenGenerator $tokenGenerator;
+    const NUMBER_OF_ELEMENT = 5;
 
     public function __construct(UserPasswordHasherInterface $passwordHasher, TokenGenerator $tokenGenerator)
     {
@@ -42,7 +43,7 @@ class AppFixtures extends Fixture
 
     public function loadUser(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < self::NUMBER_OF_ELEMENT; $i++) {
             $user  = new User;
             $user->setEmail($this->faker->email())
                 ->setRoles(USER::ROLE_USER)
@@ -108,7 +109,7 @@ class AppFixtures extends Fixture
         //récuperation de l'établissement
         $establishment = $this->getReference("establishment");
 
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < self::NUMBER_OF_ELEMENT; $i++) {
 
             //récupération d'une catégorie
             $category = $this->getReference("category" . $this->faker->numberBetween(1,5));
@@ -159,7 +160,7 @@ class AppFixtures extends Fixture
         //récuperation de l'établissement
         $establishment = $this->getReference("establishment");
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < self::NUMBER_OF_ELEMENT; $i++) {
             // récuperation de la catégorie
             $category  = $this->getReference("category" . rand(1,5));
 

@@ -54,14 +54,21 @@ class Establishment
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:establishment:collection', 'read:contact:collection', 'read:job:collection', 'read:jobAdvert:collection',  'read:user:collection'])]
+    #[Groups([
+        'read:establishment:collection',
+        'read:contact:collection',
+        'read:job:collection',
+        'read:jobAdvert:collection',
+        'read:user:collection',
+        'read:category:collection'
+    ])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:item', 'write:establishment:collection']),
+        Groups(['read:establishment:item', 'write:establishment:collection','put:establishment:item']),
         Assert\NotBlank(),
         Assert\Length(min: 2)
     ]
@@ -71,7 +78,15 @@ class Establishment
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:collection', 'read:job:collection', 'read:contact:collection', 'read:jobAdvert:collection',  'read:user:collection', 'write:establishment:collection']),
+        Groups(['read:establishment:collection',
+            'read:job:collection',
+            'read:contact:collection',
+            'read:jobAdvert:collection',
+            'read:user:collection',
+            'read:category:collection',
+            'write:establishment:collection',
+            'put:establishment:item'
+        ]),
         Assert\NotBlank(),
         Assert\Length(min: 2)
     ]
@@ -81,7 +96,7 @@ class Establishment
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:item', 'write:establishment:collection']),
+        Groups(['read:establishment:item', 'write:establishment:collection','put:establishment:item']),
         Assert\NotBlank(),
         Assert\Length(min: 10)
     ]
@@ -91,7 +106,7 @@ class Establishment
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:collection', 'write:establishment:collection']),
+        Groups(['read:establishment:collection', 'write:establishment:collection','put:establishment:item']),
         Assert\NotBlank(),
         Assert\Length(min: 2)
     ]
@@ -101,7 +116,7 @@ class Establishment
      * @ORM\Column(type="integer")
      */
     #[
-        Groups(['read:establishment:collection', 'write:establishment:collection']),
+        Groups(['read:establishment:collection', 'write:establishment:collection','put:establishment:item']),
         Assert\NotBlank(),
     ]
     private $departmentNumber;
@@ -110,7 +125,7 @@ class Establishment
      * @ORM\Column(type="string", length=255)
      */
     #[
-        Groups(['read:establishment:collection', 'write:establishment:collection']),
+        Groups(['read:establishment:collection', 'write:establishment:collection','put:establishment:item']),
         Assert\NotBlank(),
         Assert\Length(min: 2)
     ]

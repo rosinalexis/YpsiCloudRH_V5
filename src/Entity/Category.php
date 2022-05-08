@@ -55,7 +55,7 @@ class Category
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:category:collection', 'read:user:item'])]
+    #[Groups(['read:category:collection','read:job:collection', 'read:user:item'])]
     private $id;
 
     /**
@@ -105,7 +105,7 @@ class Category
      * @ORM\ManyToOne(targetEntity=Establishment::class, inversedBy="categories")
      * @ORM\JoinColumn(nullable=false)
      */
-    #[Groups(['read:category:item', 'write:category:collection'])]
+    #[Groups(['read:category:collection', 'write:category:collection'])]
     #[Assert\NotBlank()]
     private $establishment;
 

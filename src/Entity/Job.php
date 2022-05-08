@@ -60,7 +60,7 @@ class Job
      */
 
     #[
-        Groups(['read:job:collection', 'read:user:collection', 'write:job:collection', 'write:user:collection']),
+        Groups(['read:job:collection', 'read:user:collection', 'write:job:collection']),
         Assert\NotBlank(),
 
     ]
@@ -69,7 +69,7 @@ class Job
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    #[Groups(['read:job:item', 'read:user:item', 'write:job:collection', 'write:user:collection'])]
+    #[Groups(['read:job:item', 'read:user:item', 'write:job:collection'])]
     private $description;
 
     /**
@@ -85,7 +85,7 @@ class Job
     private $updatedAt;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, mappedBy="job", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="job", cascade={"persist"})
      */
     #[Groups(['read:job:collection'])]
     private $user;
@@ -93,7 +93,7 @@ class Job
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="jobs")
      */
-    #[Groups(['read:job:collection', 'read:user:item', 'write:user:collection', 'write:job:collection'])]
+    #[Groups(['read:job:collection', 'read:user:item', 'write:job:collection'])]
     #[Assert\NotBlank()]
     private $category;
 
