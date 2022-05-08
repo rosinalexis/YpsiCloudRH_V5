@@ -16,7 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="jobs_adverts")
  */
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:jobAdvert:collection']],
     collectionOperations: [
         'get',
         'post' => [
@@ -40,7 +39,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can delete job.",
         ]
-    ]
+    ],
+    normalizationContext: ['groups' => ['read:jobAdvert:collection']]
 )]
 class JobAdvert
 {
@@ -68,7 +68,7 @@ class JobAdvert
     #[
         Groups(['read:jobAdvert:item', 'write:jobAdvert:collection']),
         Assert\NotBlank(),
-        Assert\Length(min: 5, max: 100)
+        Assert\Length(min: 3, max: 100)
     ]
     private $place;
 
@@ -97,7 +97,7 @@ class JobAdvert
      */
     #[
         Groups(['read:jobAdvert:item', 'write:jobAdvert:collection', 'write:jobAdvert:put']),
-        Assert\Length(min: 5, max: 100)
+        Assert\Length(min: 3, max: 100)
     ]
     private $wage;
 

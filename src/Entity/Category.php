@@ -101,6 +101,14 @@ class Category
     #[Groups(['read:category:item'])]
     private $jobAdverts;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Establishment::class, inversedBy="categories")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    #[Groups(['read:category:item', 'write:category:collection'])]
+    #[Assert\NotBlank()]
+    private $establishment;
+
     public function __construct()
     {
         $this->jobs = new ArrayCollection();
@@ -229,6 +237,18 @@ class Category
                 $jobAdvert->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    public function setEstablishment(?Establishment $establishment): self
+    {
+        $this->establishment = $establishment;
 
         return $this;
     }

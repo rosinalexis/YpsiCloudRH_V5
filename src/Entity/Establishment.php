@@ -146,11 +146,25 @@ class Establishment
     #[Groups(['read:establishment:item'])]
     private $jobAdverts;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Category::class, mappedBy="establishment", orphanRemoval=true)
+     */
+    #[Groups(['read:establishment:item'])]
+    private $categories;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Job::class, mappedBy="establishment")
+     */
+    #[Groups(['read:establishment:item'])]
+    private $jobs;
+
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->jobAdverts = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->jobs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -330,6 +344,66 @@ class Establishment
             // set the owning side to null (unless already changed)
             if ($jobAdvert->getEstablishment() === $this) {
                 $jobAdvert->setEstablishment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Category[]
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+            $category->setEstablishment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        if ($this->categories->removeElement($category)) {
+            // set the owning side to null (unless already changed)
+            if ($category->getEstablishment() === $this) {
+                $category->setEstablishment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Job[]
+     */
+    public function getJobs(): Collection
+    {
+        return $this->jobs;
+    }
+
+    public function addJob(Job $job): self
+    {
+        if (!$this->jobs->contains($job)) {
+            $this->jobs[] = $job;
+            $job->setEstablishment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJob(Job $job): self
+    {
+        if ($this->jobs->removeElement($job)) {
+            // set the owning side to null (unless already changed)
+            if ($job->getEstablishment() === $this) {
+                $job->setEstablishment(null);
             }
         }
 

@@ -14,7 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="jobs")
  */
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:job:collection']],
     collectionOperations: [
         'get' => [
             "security" => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
@@ -43,7 +42,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can delete job.",
         ]
-    ]
+    ],
+    normalizationContext: ['groups' => ['read:job:collection']]
 )]
 class Job
 {
@@ -94,7 +94,15 @@ class Job
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="jobs")
      */
     #[Groups(['read:job:collection', 'read:user:item', 'write:user:collection', 'write:job:collection'])]
+    #[Assert\NotBlank()]
     private $category;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Establishment::class, inversedBy="jobs")
+     */
+    #[Groups(['read:job:collection','write:job:collection'])]
+    #[Assert\NotBlank()]
+    private $establishment;
 
     public function getId(): ?int
     {
@@ -192,6 +200,18 @@ class Job
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    public function setEstablishment(?Establishment $establishment): self
+    {
+        $this->establishment = $establishment;
 
         return $this;
     }

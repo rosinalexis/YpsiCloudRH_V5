@@ -37,10 +37,10 @@ class AppFixtures extends Fixture
         $this->loadJobAdvert($manager);
         $this->loadJob($manager);
         $this->loadProfile($manager);
-        $this->laodUser($manager);
+        $this->loadUser($manager);
     }
 
-    public function laodUser(ObjectManager $manager): void
+    public function loadUser(ObjectManager $manager): void
     {
         for ($i = 0; $i < 15; $i++) {
             $user  = new User;
@@ -50,7 +50,7 @@ class AppFixtures extends Fixture
                 ->setIsActivated($this->faker->randomElement([true, false]))
                 ->setProfile($this->getReference("profile$i"))
                 ->setJob($this->getReference("job$i"))
-                ->addEstablishment($this->getReference("establishment" . rand(0, 2)))
+                ->addEstablishment($this->getReference("establishment"))
                 ->setCurrentEstablishment($user->getEstablishment()[0]->getId());
 
             if (!$user->getIsActivated()) {
@@ -68,10 +68,9 @@ class AppFixtures extends Fixture
             ->setRoles(USER::ROLE_ADMIN)
             ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
             ->setIsActivated(true)
-            ->addEstablishment($this->getReference("establishment0"))
-            ->addEstablishment($this->getReference("establishment1"))
-            ->addEstablishment($this->getReference("establishment2"))
+            ->addEstablishment($this->getReference("establishment"))
             ->setCurrentEstablishment($user->getEstablishment()[0]->getId());
+
         $manager->persist($user);
         $manager->flush();
 
@@ -80,7 +79,7 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_USER'])
             ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
             ->setIsActivated(true)
-            ->addEstablishment($this->getReference("establishment0"))
+            ->addEstablishment($this->getReference("establishment"))
             ->setCurrentEstablishment($user->getEstablishment()[0]->getId());
         $manager->persist($user);
         $manager->flush();
@@ -104,18 +103,26 @@ class AppFixtures extends Fixture
         }
     }
 
-
     public function loadJob(ObjectManager $manager): void
     {
+        //récuperation de l'établissement
+        $establishment = $this->getReference("establishment");
+
         for ($i = 0; $i < 15; $i++) {
+
+            //récupération d'une catégorie
+            $category = $this->getReference("category" . $this->faker->numberBetween(1,5));
+
             $job = new Job();
             $job->setTitle($this->faker->jobTitle())
                 ->setDescription($this->faker->realText())
-                ->setCategory($this->getReference("category" . $this->faker->randomElement([0, 1, 2, 3, 4])));
+                ->setEstablishment($establishment)
+                ->setCategory($category);
 
             $manager->persist($job);
             $manager->flush();
 
+            //partege du job
             $this->setReference("job$i", $job);
         }
     }
@@ -123,42 +130,53 @@ class AppFixtures extends Fixture
     public function loadCategory(ObjectManager $manager): void
     {
         $listCategory = [
-            0 => "Informatique",
-            1 => "Marketing",
-            2 => "Secrétariat",
-            3 => "Restaurant",
-            4 => "Management"
+            1 => "Informatique",
+            2 => "Marketing",
+            3 => "Secrétariat",
+            4 => "Restaurant",
+            5 => "Management"
         ];
+
+        //récuperation de l'établissement
+        $establishment = $this->getReference("establishment");
 
         foreach ($listCategory as $key => $categoryValue) {
 
             $category = new Category;
             $category->setTitle($categoryValue);
             $category->setDescription($this->faker->realText());
+            $category->setEstablishment($establishment);
             $manager->persist($category);
             $manager->flush();
 
             $this->setReference("category$key", $category);
         }
+
     }
 
     public function loadJobAdvert(ObjectManager $manager): void
     {
+        //récuperation de l'établissement
+        $establishment = $this->getReference("establishment");
+
         for ($i = 0; $i < 5; $i++) {
+            // récuperation de la catégorie
+            $category  = $this->getReference("category" . rand(1,5));
 
             $jobAdvert = new JobAdvert();
 
-            $jobAdvert->setTitle($this->faker->jobTitle())
+            $jobAdvert
+                ->setTitle($this->faker->jobTitle())
                 ->setPlace($this->faker->country())
                 ->setCompagny('YPSI')
                 ->setContractType($this->faker->randomElement(['CDD', 'CDI', 'ITERIM']))
                 ->setWage($this->faker->numberBetween(1000, 3000) . "€")
                 ->setDescription($this->faker->realText())
                 ->setPublished($this->faker->randomElement([true, false]))
-                ->setCategory($this->getReference("category$i"))
+                ->setCategory($category)
                 ->setTasks(["task1", "task2", "task3"])
                 ->setRequirements(["requirement1", "requirement2", "requirement3"])
-                ->setEstablishment($this->getReference("establishment" . rand(0, 2)));
+                ->setEstablishment($establishment);
 
             $manager->persist($jobAdvert);
             $manager->flush();
@@ -216,20 +234,18 @@ class AppFixtures extends Fixture
             ],
         ];
 
-        for ($i = 0; $i < 3; $i++) {
-            $establishment = new Establishment();
-            $establishment->setSiret($this->faker->siret())
-                ->setName("Etablissement N° $i")
-                ->setPhone($this->faker->phoneNumber())
-                ->setDepartmentName($this->faker->departmentName())
-                ->setDepartmentNumber(intval($this->faker->departmentNumber()))
-                ->setSetting($configuration)
-                ->setRegion($this->faker->region());
+        $establishment = new Establishment();
+        $establishment->setSiret($this->faker->siret())
+            ->setName("Etablissement Test")
+            ->setPhone($this->faker->phoneNumber())
+            ->setDepartmentName($this->faker->departmentName())
+            ->setDepartmentNumber(intval($this->faker->departmentNumber()))
+            ->setSetting($configuration)
+            ->setRegion($this->faker->region());
 
-            $manager->persist($establishment);
-            $manager->flush();
+        $manager->persist($establishment);
+        $manager->flush();
 
-            $this->setReference("establishment$i", $establishment);
-        }
+        $this->setReference("establishment", $establishment);
     }
 }
