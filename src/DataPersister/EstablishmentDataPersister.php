@@ -26,7 +26,26 @@ final class EstablishmentDataPersister implements ContextAwareDataPersisterInter
 
         if ($data instanceof Establishment  && (($context['collection_operation_name'] ?? null) === 'post')) {
             $configuration = [
-                "emailTemplate" => [],
+                "emailTemplate" => [
+                    [
+                        "title" => "template accusé de réception",
+                        "status" => false,
+                        "object" => " accusé de réception test",
+                        "content" => [
+                            "ops" => []
+                        ],
+                        "htmlContent" => "<p>Bonjour  %user%, </p> <br/> <p>je suis la version 1</p> <br/> <p>cordialement</p>"
+                    ],
+                    [
+                        "title" => "template de date",
+                        "status" => false,
+                        "object" => "template accusé de réception date",
+                        "content" => [
+                            "ops" => []
+                        ],
+                        "htmlContent" => "<p>Bonjour  %user%, </p> <br/> <p>je suis la version 2</p> <br/> <p>cordialement</p>"
+                    ]
+                ],
                 "equipmentConfig" => [],
                 "documentConfig" => [],
                 "helpDocumentConfig" => [],
