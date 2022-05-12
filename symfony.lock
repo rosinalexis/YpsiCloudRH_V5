@@ -406,19 +406,19 @@
         "version": "5.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
-            "branch": "master",
+            "branch": "main",
             "version": "5.3",
-            "ref": "414ba00ad43fa71be42c7906a551f1831716b03c"
+            "ref": "09e1895fe170fe829d57168ba8ad268ef2669cc3"
         },
         "files": [
-            "./config/services.yaml",
-            "./config/routes/framework.yaml",
-            "./config/preload.php",
-            "./config/packages/cache.yaml",
-            "./config/packages/framework.yaml",
-            "./public/index.php",
-            "./src/Kernel.php",
-            "./src/Controller/.gitignore"
+            "config/packages/cache.yaml",
+            "config/packages/framework.yaml",
+            "config/preload.php",
+            "config/routes/framework.yaml",
+            "config/services.yaml",
+            "public/index.php",
+            "src/Controller/.gitignore",
+            "src/Kernel.php"
         ]
     },
     "symfony/google-mailer": {
