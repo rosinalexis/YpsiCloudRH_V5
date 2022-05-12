@@ -21,7 +21,7 @@ final class EstablishmentDataPersister implements ContextAwareDataPersisterInter
         return $data instanceof Establishment;
     }
 
-    public function persist($data, array $context = [])
+    public function persist($data, array $context = []) :void
     {
 
         if ($data instanceof Establishment  && (($context['collection_operation_name'] ?? null) === 'post')) {
@@ -55,6 +55,7 @@ final class EstablishmentDataPersister implements ContextAwareDataPersisterInter
         }
         $this->_em->persist($data);
         $this->_em->flush();
+
     }
 
     public function remove($data, array $context = [])

@@ -28,8 +28,6 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-
-
         if ($data instanceof Contact && (($context['collection_operation_name'] ?? null) === 'post')) {
 
             $management = [
@@ -109,6 +107,8 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
         //enregistrement des données 
         $this->_em->persist($data);
         $this->_em->flush();
+
+        return $data;
     }
 
     public function remove($data, array $context = [])
