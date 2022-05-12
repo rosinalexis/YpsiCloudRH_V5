@@ -311,6 +311,9 @@
             "./config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "stella-maris/clock": {
+        "version": "0.1.4"
+    },
     "symfony/asset": {
         "version": "v5.3.4"
     },

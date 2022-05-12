@@ -154,6 +154,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-intl-normalizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/doctrine-bridge" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/dependency-injection" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/stella-maris/clock" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
