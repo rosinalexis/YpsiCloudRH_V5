@@ -161,6 +161,14 @@ class JobAdvert
     #[Groups(['read:jobAdvert:collection', 'read:contact:collection', 'write:jobAdvert:collection'])]
     private $establishment;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    #[Groups(['read:jobAdvert:collection', 'read:contact:collection', 'write:jobAdvert:collection'])]
+    #[ Assert\NotBlank()]
+    private $reference;
+
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
@@ -263,7 +271,6 @@ class JobAdvert
     public function setTasks(?array $tasks): self
     {
         $this->tasks = $tasks;
-
         return $this;
     }
 
@@ -275,7 +282,6 @@ class JobAdvert
     public function setRequirements(?array $requirements): self
     {
         $this->requirements = $requirements;
-
         return $this;
     }
 
@@ -366,7 +372,19 @@ class JobAdvert
     public function setEstablishment(?Establishment $establishment): self
     {
         $this->establishment = $establishment;
-
         return $this;
+    }
+
+    public function getReference() :?string
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param string $reference
+     */
+    public function setReference(string $reference): void
+    {
+        $this->reference = $reference;
     }
 }

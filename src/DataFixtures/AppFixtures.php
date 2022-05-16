@@ -179,6 +179,8 @@ class AppFixtures extends Fixture
                 ->setRequirements(["requirement1", "requirement2", "requirement3"])
                 ->setEstablishment($establishment);
 
+            $jobAdvert->setReference(bin2hex(random_bytes(16)));
+
             $manager->persist($jobAdvert);
             $manager->flush();
         }
