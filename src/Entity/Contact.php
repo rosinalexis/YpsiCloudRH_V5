@@ -18,7 +18,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Vich\Uploadable()
  */
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:contact:collection']],
     collectionOperations: [
         'get' => [
             "security" => "is_granted('ROLE_ADMIN') ",
@@ -57,7 +56,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             "security" => "is_granted('ROLE_ADMIN') ",
             "security_message" => "Only admins can delete job.",
         ]
-    ]
+    ],
+    normalizationContext: ['groups' => ['read:contact:collection']]
 )]
 class Contact
 {

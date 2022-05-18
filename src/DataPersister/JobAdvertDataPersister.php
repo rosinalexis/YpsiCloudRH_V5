@@ -24,10 +24,11 @@ final class JobAdvertDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
+
         if($data instanceof  JobAdvert && (( $context['collection_operation_name'] ?? null)=== 'post'))
         {
             try {
-                $data->setReference(bin2hex(random_bytes(16)));
+                $data->setReference("ref_".date("Y")."_". bin2hex(random_bytes(16)));
             } catch (\Exception $e) {
                 $data->setReference("pas de reference");
             }

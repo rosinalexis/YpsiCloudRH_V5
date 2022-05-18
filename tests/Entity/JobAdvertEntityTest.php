@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Tests\Enity;
+namespace App\Tests\Entity;
 
 use App\Entity\JobAdvert;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class jobAdvertTest extends KernelTestCase
+class JobAdvertEntityTest extends KernelTestCase
 {
     private ValidatorInterface $validator;
 
@@ -112,7 +112,7 @@ class jobAdvertTest extends KernelTestCase
     }
 
 
-    private function getValidationErrors(JobAdvert $jobAdvert, int $numberOfExpectedErrors): ConstraintViolationList
+    private function getValidationErrors(JobAdvert $jobAdvert, int $numberOfExpectedErrors): void
     {
         $errors  = $this->validator->validate($jobAdvert);
 
@@ -126,12 +126,7 @@ class jobAdvertTest extends KernelTestCase
 
         $this->assertCount($numberOfExpectedErrors, $errors, implode(', ', $messages));
 
-        return $errors;
     }
 
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
 }

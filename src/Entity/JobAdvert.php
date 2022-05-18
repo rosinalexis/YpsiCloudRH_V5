@@ -165,7 +165,6 @@ class JobAdvert
      * @ORM\Column(type="string", length=255)
      */
     #[Groups(['read:jobAdvert:collection', 'read:contact:collection', 'write:jobAdvert:collection'])]
-    #[ Assert\NotBlank()]
     private $reference;
 
 
