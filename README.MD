@@ -28,6 +28,14 @@ docker-compose up -d
 symfony serve -d
 ```
 
+#### Pour generer le clé pour les jwt
+
+```bash
+php bin/console lexik:jwt:generate-keypair 
+```
+pour écraser les existants utiliser l'option: 
+--overwrite 
+
 ### Connexion à la base de données docker
 
 ```bash
