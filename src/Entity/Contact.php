@@ -362,7 +362,7 @@ class Contact
     public function setCvFileUrl()
     {
         if (null !== $this->getCvUrl()) {
-            $this->cvFileUrl = "/images/contacts/" . $this->getCvUrl();
+            $this->cvFileUrl = "https://obs-cloud-rh.oss.eu-west-0.prod-cloud-ocb.orange-business.com/" . $this->getCvUrl();
         } else {
             $this->cvFileUrl = null;
         }
@@ -398,7 +398,7 @@ class Contact
     public function setCoverLetterFileUrl()
     {
         if (null !== $this->getCoverLetterUrl()) {
-            $this->coverLetterFileUrl = '/images/contacts/' . $this->getCoverLetterUrl();
+            $this->coverLetterFileUrl = 'https://obs-cloud-rh.oss.eu-west-0.prod-cloud-ocb.orange-business.com/' . $this->getCoverLetterUrl();
         } else {
             $this->coverLetterFileUrl = null;
         }
