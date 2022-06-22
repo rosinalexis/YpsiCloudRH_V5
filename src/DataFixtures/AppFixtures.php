@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use DateTimeImmutable;
 use Faker\Factory;
 use App\Entity\Job;
 use App\Entity\User;
@@ -15,12 +16,13 @@ use App\Entity\Setting;
 use App\Security\TokenGenerator;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Faker\Generator;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private UserPasswordHasherInterface $passwordHasher;
-    private \Faker\Generator $faker;
+    private Generator $faker;
     private TokenGenerator $tokenGenerator;
     const NUMBER_OF_ELEMENT = 5;
 
@@ -95,7 +97,7 @@ class AppFixtures extends Fixture
                 ->setGender($this->faker->randomElement([PROFILE::GENDER_MALE, PROFILE::GENDER_FEMALE, PROFILE::GENDER_GIRL]))
                 ->setAddress($this->faker->address())
                 ->setPhone($this->faker->phoneNumber())
-                ->setBirthdate(new \DateTimeImmutable())
+                ->setBirthdate(new DateTimeImmutable())
                 ->setDescription($this->faker->realText(100));
             $manager->persist($profile);
             $manager->flush();

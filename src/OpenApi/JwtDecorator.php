@@ -7,6 +7,7 @@ namespace App\OpenApi;
 use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\Core\OpenApi\OpenApi;
 use ApiPlatform\Core\OpenApi\Model;
+use ArrayObject;
 
 final class JwtDecorator implements OpenApiFactoryInterface
 {
@@ -22,7 +23,7 @@ final class JwtDecorator implements OpenApiFactoryInterface
 
 
         //définition du schéma de la réponse
-        $schemas['Token'] = new \ArrayObject([
+        $schemas['Token'] = new ArrayObject([
             'type' => 'object',
             'properties' => [
                 'token' => [
@@ -33,7 +34,7 @@ final class JwtDecorator implements OpenApiFactoryInterface
         ]);
 
         //définition du schéma de la ressource
-        $schemas['Credentials'] = new \ArrayObject([
+        $schemas['Credentials'] = new ArrayObject([
             'type' => 'object',
             'properties' => [
                 'username' => [
@@ -68,7 +69,7 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 summary: 'Get JWT token to login',
                 requestBody: new Model\RequestBody(
                     description: 'Generate new JWT Token',
-                    content: new \ArrayObject(
+                    content: new ArrayObject(
                         [
                             'application/json' => [
                                 'schema' => [

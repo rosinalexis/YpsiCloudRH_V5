@@ -75,7 +75,7 @@ class ContactEntityTest extends KernelTestCase
 
     private function getEntity(): Contact
     {
-        $category = \App\Tests\Entity\CategoryEntityTest::getEntity();
+        $category = CategoryEntityTest::getEntity();
 
         $jobAdvert = new JobAdvert();
 

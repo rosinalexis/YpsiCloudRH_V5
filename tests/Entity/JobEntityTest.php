@@ -3,6 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Job;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -48,8 +49,8 @@ class JobEntityTest extends KernelTestCase
         $job = new Job();
         $job->setTitle("testJob")
             ->setDescription("testdescriptionjob")
-            ->setCreatedAt(new \DateTimeImmutable)
-            ->setUpdatedAt(new \DateTimeImmutable);
+            ->setCreatedAt(new DateTimeImmutable)
+            ->setUpdatedAt(new DateTimeImmutable);
 
         return $job;
     }

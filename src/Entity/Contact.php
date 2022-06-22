@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ContactRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -10,6 +11,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 /**
  * @ORM\Entity(repositoryClass=ContactRepository::class)
@@ -111,7 +113,7 @@ class Contact
 
 
     /**
-     * @Vich\UploadableField(mapping="contacts", fileNameProperty="cvUrl")
+     * @Vich\UploadableField(mapping="contacts", fileNameProperty="cvFileName")
      * @var File|null
      */
     #[Groups(['post:contact:document'])]
@@ -121,19 +123,19 @@ class Contact
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    #[Groups(['read:contact:collection'])]
-    private $cvUrl;
+    #[Groups(['read:contact:item'])]
+    private $cvFileName;
 
 
     /**
      * @ORM\Column(type="string", length=255, nullable = true)
      */
-    #[Groups(['read:contact:item'])]
+    #[Groups(['read:contact:collection'])]
     private $cvFileUrl;
 
 
     /**
-     * @Vich\UploadableField(mapping="contacts", fileNameProperty="coverLetterUrl")
+     * @Vich\UploadableField(mapping="contacts", fileNameProperty="coverLetterName")
      * @var File|null
      */
     #[Groups(['post:contact:document'])]
@@ -142,13 +144,13 @@ class Contact
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    #[Groups(['read:contact:collection'])]
-    private $coverLetterUrl;
+    #[Groups(['read:contact:item'])]
+    private $coverLetterName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable = true)
      */
-    #[Groups(['read:contact:item'])]
+    #[Groups(['read:contact:collection'])]
     private $coverLetterFileUrl;
 
     /**
@@ -167,18 +169,6 @@ class Contact
     private $management;
 
     /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    #[Groups(['read:contact:collection'])]
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    #[Groups(['read:contact:item'])]
-    private $updatedAt;
-
-    /**
      * @ORM\ManyToOne(targetEntity=JobAdvert::class, inversedBy="contacts")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -192,6 +182,18 @@ class Contact
      */
     #[Groups(['read:contact:collection', 'read:contact:item', 'write:contact:put'])]
     private $state;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    #[Groups(['read:contact:collection'])]
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    #[Groups(['read:contact:item'])]
+    private $updatedAt;
 
 
     public function getId(): ?int
@@ -247,19 +249,6 @@ class Contact
         return $this;
     }
 
-
-    public function getCoverLetterUrl(): ?string
-    {
-        return $this->coverLetterUrl;
-    }
-
-    public function setCoverLetterUrl(?string $coverLetterUrl): self
-    {
-        $this->coverLetterUrl = $coverLetterUrl;
-
-        return $this;
-    }
-
     public function getMessage(): ?string
     {
         return $this->message;
@@ -284,67 +273,29 @@ class Contact
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updateTimestamps()
-    {
-        if ($this->getCreatedAt() === null) {
-            $this->setCreatedAt(new \DateTimeImmutable);
-        }
-
-        $this->setUpdatedAt(new \DateTimeImmutable);
-    }
-
-
     public function getCvFile(): ?File
     {
         return $this->cvFile;
     }
 
-    public function setCvFile(?File $cvFile = null)
+    public function setCvFile(?File $cvFile = null) :self
     {
         $this->cvFile = $cvFile;
         if (null !== $cvFile) {
-            $this->setUpdatedAt(new \DateTimeImmutable());
+            $this->setUpdatedAt(new DateTimeImmutable());
         }
 
         return $this;
     }
 
-    public function getCvUrl(): ?string
+    public function getCvFileName(): ?string
     {
-        return $this->cvUrl;
+        return $this->cvFileName;
     }
 
-    public function setCvUrl(?string $cvUrl): self
+    public function setCvFileName(?string $name): self
     {
-        $this->cvUrl = $cvUrl;
+        $this->cvFileName = $name;
 
         return $this;
     }
@@ -359,10 +310,10 @@ class Contact
     /**
      * @ORM\PostUpdate
      */
-    public function setCvFileUrl()
+    public function setCvFileUrl() :self
     {
-        if (null !== $this->getCvUrl()) {
-            $this->cvFileUrl = "https://obs-cloud-rh.oss.eu-west-0.prod-cloud-ocb.orange-business.com/" . $this->getCvUrl();
+        if (null !== $this->getCvFileName()) {
+            $this->cvFileUrl = env('AWS_S3_FILE_URL') ."/". $this->getCvFileName();
         } else {
             $this->cvFileUrl = null;
         }
@@ -370,6 +321,17 @@ class Contact
         return $this;
     }
 
+    public function getCoverLetterName(): ?string
+    {
+        return $this->coverLetterName;
+    }
+
+    public function setCoverLetterName(?string $name): self
+    {
+        $this->coverLetterName = $name;
+
+        return $this;
+    }
 
     public function getCoverLetterFile(): ?File
     {
@@ -377,11 +339,11 @@ class Contact
     }
 
 
-    public function setCoverLetterFile(?File $coverLetterFile = null)
+    public function setCoverLetterFile(?File $coverLetterFile = null):self
     {
         $this->coverLetterFile = $coverLetterFile;
         if (null !== $coverLetterFile) {
-            $this->setUpdatedAt(new \DateTimeImmutable());
+            $this->setUpdatedAt(new DateTimeImmutable());
         }
 
         return $this;
@@ -395,16 +357,18 @@ class Contact
     /**
      * @ORM\PostUpdate
      */
-    public function setCoverLetterFileUrl()
+    public function setCoverLetterFileUrl():self
     {
-        if (null !== $this->getCoverLetterUrl()) {
-            $this->coverLetterFileUrl = 'https://obs-cloud-rh.oss.eu-west-0.prod-cloud-ocb.orange-business.com/' . $this->getCoverLetterUrl();
+        if (null !== $this->getCoverLetterName()) {
+            $this->coverLetterFileUrl = env('AWS_S3_FILE_URL') . $this->getCoverLetterName();
         } else {
             $this->coverLetterFileUrl = null;
         }
 
         return $this;
     }
+
+
 
     public function getJobReference(): ?JobAdvert
     {
@@ -426,13 +390,50 @@ class Contact
     public function setState(string $state): self
     {
         $this->state = $state;
-
         return $this;
     }
 
     public function getFullName(): ?string
     {
-
         return $this->getLastname() . ' ' . $this->getFirstname();
+    }
+
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps() :self
+    {
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt(new DateTimeImmutable);
+        }
+
+        $this->setUpdatedAt(new DateTimeImmutable);
+        return $this;
     }
 }

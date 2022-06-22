@@ -3,6 +3,7 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Category;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -47,8 +48,8 @@ class CategoryEntityTest extends KernelTestCase
         $category = new Category();
         $category->setTitle("testJob")
             ->setDescription("testdescriptionjob")
-            ->setCreatedAt(new \DateTimeImmutable)
-            ->setUpdatedAt(new \DateTimeImmutable);
+            ->setCreatedAt(new DateTimeImmutable)
+            ->setUpdatedAt(new DateTimeImmutable);
 
         return $category;
     }

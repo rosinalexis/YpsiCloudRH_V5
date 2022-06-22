@@ -5,6 +5,7 @@ namespace App\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\JobAdvert;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 final class JobAdvertDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -29,7 +30,7 @@ final class JobAdvertDataPersister implements ContextAwareDataPersisterInterface
         {
             try {
                 $data->setReference("ref_".date("Y")."_". bin2hex(random_bytes(16)));
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $data->setReference("pas de reference");
             }
         }

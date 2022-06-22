@@ -4,6 +4,7 @@ namespace App\Tests\Repository;
 
 use App\Entity\Profile;
 use App\Repository\ProfileRepository;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProfileTest extends KernelTestCase
@@ -94,7 +95,7 @@ class ProfileTest extends KernelTestCase
             ->setGender("Monsieur")
             ->setAddress("2 rue de Test le Jean Moulin 89000")
             ->setPhone("0224563429")
-            ->setBirthdate(new \DateTimeImmutable())
+            ->setBirthdate(new DateTimeImmutable())
             ->setDescription("description de test");
 
         return $profile;

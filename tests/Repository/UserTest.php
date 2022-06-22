@@ -6,6 +6,7 @@ namespace App\Tests\Repository;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -42,8 +43,8 @@ class UserTest extends KernelTestCase
         $userTest->setEmail("test@test.fr");
         $userTest->setPassword("123456");
         $userTest->setRoles(["ROLE_USER"]);
-        $userTest->setCreatedAt(new \DateTimeImmutable);
-        $userTest->setUpdatedAt(new \DateTimeImmutable);
+        $userTest->setCreatedAt(new DateTimeImmutable);
+        $userTest->setUpdatedAt(new DateTimeImmutable);
         $userTest->setIsActivated(true);
 
 

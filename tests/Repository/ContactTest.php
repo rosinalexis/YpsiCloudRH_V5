@@ -5,6 +5,7 @@ namespace App\Tests\Repository;
 use App\Entity\Contact;
 use App\Entity\JobAdvert;
 use App\Repository\ContactRepository;
+use App\Tests\Entity\CategoryEntityTest;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ContactTest extends KernelTestCase
@@ -73,7 +74,7 @@ class ContactTest extends KernelTestCase
 
     private function getEntity(): Contact
     {
-        $category = \App\Tests\Entity\CategoryEntityTest::getEntity();
+        $category = CategoryEntityTest::getEntity();
         $this->entityManager->persist($category);
 
         $jobAdvert = new JobAdvert();

@@ -4,6 +4,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\Profile;
 use DateTime;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -125,10 +126,10 @@ class ProfileEntityTest extends KernelTestCase
             ->setGender("monsieur")
             ->setAddress("2 rue de test le jean moulin")
             ->setPhone("0224563429")
-            ->setBirthdate(new \DateTimeImmutable())
+            ->setBirthdate(new DateTimeImmutable())
             ->setDescription("description de test")
-            ->setCreatedAt(new \DateTimeImmutable)
-            ->setUpdatedAt(new \DateTimeImmutable);
+            ->setCreatedAt(new DateTimeImmutable)
+            ->setUpdatedAt(new DateTimeImmutable);
 
         return $profile;
     }

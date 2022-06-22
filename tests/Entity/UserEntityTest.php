@@ -4,6 +4,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\User;
 use App\Kernel;
+use DateTimeImmutable;
 use Symfony\Component\Validator\Validation;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -71,8 +72,8 @@ class UserEntityTest extends KernelTestCase
             ->setIsActivated(true)
             ->setPlainPassword("123456")
             ->setRoles(["ROLE_USER"])
-            ->setCreatedAt(new \DateTimeImmutable())
-            ->setUpdatedAt(new \DateTimeImmutable());
+            ->setCreatedAt(new DateTimeImmutable())
+            ->setUpdatedAt(new DateTimeImmutable());
 
         return $user;
     }

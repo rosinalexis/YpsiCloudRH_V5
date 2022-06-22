@@ -104,7 +104,7 @@ class JobAdvertEntityTest extends KernelTestCase
             ->setWage("1200€")
             ->setDescription("Description de test")
             ->setPublished(true)
-            ->setCategory(\App\Tests\Entity\CategoryEntityTest::getEntity())
+            ->setCategory(CategoryEntityTest::getEntity())
             ->setTasks(["task1", "task2", "task3"])
             ->setRequirements(["requirement1", "requirement2", "requirement3"]);
 
