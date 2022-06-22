@@ -32,31 +32,32 @@ class HomeController extends AbstractController
     }
 
     #[Route("/confirm-user/{token}", name: "default_confirm_token", methods: ["POST"])]
-    public function confirmUser(string $token, Request $request, UserConfirmationService $userConfirmationService): JsonResponse
+    public function confirmUserAccount(string $token, Request $request, UserConfirmationService $userConfirmationService): JsonResponse
     {
+        $reponse  = new JsonResponse();
 
         //vérification des mots de passe 
         $password = $request->request->get("new_password_first");
         $confirmPassword = $request->request->get("new_password_second");
 
-
-        //si les mots de passe son identique
-        if (($password && $confirmPassword) && $password === $confirmPassword) {
+        if (($password && $confirmPassword) && ($password === $confirmPassword)) {
             $userConfirmationService->confirmUser($token, $password);
-            return new JsonResponse([
+            $reponse->setData([
                 "message" => "mot de passe modifier"
-            ], Response::HTTP_ACCEPTED);
+            ]);
+            $reponse ->setStatusCode(Response::HTTP_ACCEPTED);
+        }else {
+            $reponse->setData([
+                "message" => "mot de passe modifier"
+            ]);
+            $reponse->setStatusCode(Response::HTTP_CONFLICT);
         }
 
-        //dans le cas ou il y a une erreur
-        return new JsonResponse([
-            "error" => "les mots de passe sont invalides.",
-            "password" => $password
-        ], Response::HTTP_BAD_REQUEST);
+       return $reponse;
     }
 
     #[Route("api/meeting/email/{id}", name: "default_meeting_email")]
-    public function confirmMetingEmail(Contact $contact, Mailer $mailer): JsonResponse
+    public function confirmMeetingDate(Contact $contact, Mailer $mailer): JsonResponse
     {
         $mailer->sendMeetingMailV2($contact);
 
