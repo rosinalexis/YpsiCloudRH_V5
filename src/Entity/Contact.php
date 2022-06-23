@@ -135,7 +135,7 @@ class Contact
 
 
     /**
-     * @Vich\UploadableField(mapping="contacts", fileNameProperty="coverLetterName")
+     * @Vich\UploadableField(mapping="contacts", fileNameProperty="coverLetterFileName")
      * @var File|null
      */
     #[Groups(['post:contact:document'])]
@@ -145,7 +145,7 @@ class Contact
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     #[Groups(['read:contact:item'])]
-    private $coverLetterName;
+    private $coverLetterFileName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable = true)
@@ -322,14 +322,14 @@ class Contact
         return $this;
     }
 
-    public function getCoverLetterName(): ?string
+    public function getCoverLetterFileName(): ?string
     {
-        return $this->coverLetterName;
+        return $this->coverLetterFileName;
     }
 
-    public function setCoverLetterName(?string $name): self
+    public function setCoverLetterFileName(?string $name): self
     {
-        $this->coverLetterName = $name;
+        $this->coverLetterFileName = $name;
 
         return $this;
     }
@@ -360,8 +360,8 @@ class Contact
      */
     public function setCoverLetterFileUrl():self
     {
-        if (null !== $this->getCoverLetterName()) {
-            $this->coverLetterFileUrl = $_ENV['AWS_S3_FILE_URL']."/". $this->getCoverLetterName();
+        if (null !== $this->getCoverLetterFileName()) {
+            $this->coverLetterFileUrl = $_ENV['AWS_S3_FILE_URL']."/". $this->getCoverLetterFileName();
         } else {
             $this->coverLetterFileUrl = null;
         }

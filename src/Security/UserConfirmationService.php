@@ -62,4 +62,34 @@ class UserConfirmationService
 
         return $user;
     }
+
+
+    public function addOneAdminUser(string $email,string $plainPassword) : User{
+
+        $users= $this->userRepo->findAll();
+
+        foreach ($users as $user){
+            if ($user->getRoles() == User::ROLE_ADMIN) {
+                throw new NotFoundHttpException("There is an admin account on this app.");
+            }
+        }
+
+        $adminUser = new User();
+        $adminUser->setIsActivated(true)
+            ->setRoles(USER::ROLE_ADMIN)
+            ->setEmail($email)
+            ->setPassword(
+                $this->passwordHasher->hashPassword(
+                    $adminUser,
+                    $plainPassword
+                )
+            );
+
+        $this->em->persist($adminUser);
+        $this->em->flush($adminUser);
+
+        return $adminUser;
+    }
+
+
 }

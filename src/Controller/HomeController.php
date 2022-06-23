@@ -6,6 +6,7 @@ use App\Email\Mailer;
 use App\Entity\Contact;
 use App\Form\NewPasswordType;
 
+use App\Repository\UserRepository;
 use App\Security\UserConfirmationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -105,8 +106,20 @@ class HomeController extends AbstractController
         //return $this->render('email/date_validation/user_date_validation.html.twig', compact('meetingDate'));
     }
 
-    #[Route("/add/admin/user", name: "default_add_admin_user", methods: ["POST"])]
-    public function addNewAdminUser(Request $request, EntityManagerInterface $em){
-        dd($request);
+    #[Route("/add/admin/user", name: "default_add_admin_user")]
+    public function addNewAdminUser(Request $request, UserConfirmationService $userConfirmationService): JsonResponse
+    {
+        $userEmail  = $request->request->get('email');
+        $password = $request->request->get('password');
+        $confirmPassword  = $request->request->get('confirmPassword');
+
+        if($userEmail && $password && $confirmPassword && ($password == $confirmPassword))
+        {
+            $userConfirmationService->addOneAdminUser($userEmail,$password);
+
+            return new JsonResponse([],RESPONSE::HTTP_CREATED);
+        }
+
+        return new JsonResponse(['message' =>'error with the password or the email.'],Response::HTTP_BAD_REQUEST);
     }
 }
