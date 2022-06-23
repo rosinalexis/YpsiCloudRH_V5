@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
+
 
 /**
  * @ORM\Entity(repositoryClass=ContactRepository::class)
@@ -313,7 +313,8 @@ class Contact
     public function setCvFileUrl() :self
     {
         if (null !== $this->getCvFileName()) {
-            $this->cvFileUrl = env('AWS_S3_FILE_URL') ."/". $this->getCvFileName();
+
+            $this->cvFileUrl = $_ENV['AWS_S3_FILE_URL']."/". $this->getCvFileName();
         } else {
             $this->cvFileUrl = null;
         }
@@ -360,7 +361,7 @@ class Contact
     public function setCoverLetterFileUrl():self
     {
         if (null !== $this->getCoverLetterName()) {
-            $this->coverLetterFileUrl = env('AWS_S3_FILE_URL') . $this->getCoverLetterName();
+            $this->coverLetterFileUrl = $_ENV['AWS_S3_FILE_URL']."/". $this->getCoverLetterName();
         } else {
             $this->coverLetterFileUrl = null;
         }

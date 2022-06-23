@@ -6,9 +6,21 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: ypsi_cloud_rh
     ports:
-      - 44021:3306
+      - "44021:3306"
     networks:
       - dev
+
+  minio:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: access1234
+      MINIO_ROOT_PASSWORD: secret1234
+    volumes:
+      - data1-1:/data
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
 
 #  phpmyadmin:
 #    image: phpmyadmin
@@ -22,6 +34,9 @@ services:
 #      PMA_HOST: database
 #    networks:
 #      - dev
+
+volumes:
+  data1-1:
 
 networks:
   dev:
