@@ -49,9 +49,9 @@ class HomeController extends AbstractController
             $reponse ->setStatusCode(Response::HTTP_ACCEPTED);
         }else {
             $reponse->setData([
-                "message" => "mot de passe modifier"
+                "message" => "les mots de passe ne sont pas identiques."
             ]);
-            $reponse->setStatusCode(Response::HTTP_CONFLICT);
+            $reponse->setStatusCode(Response::HTTP_BAD_REQUEST);
         }
 
        return $reponse;
@@ -107,19 +107,29 @@ class HomeController extends AbstractController
     }
 
     #[Route("/add/admin/user", name: "default_add_admin_user")]
-    public function addNewAdminUser(Request $request, UserConfirmationService $userConfirmationService): JsonResponse
+    public function addNewAdminUser(Request $request, UserConfirmationService $userConfirmationService) : JsonResponse
     {
-        $userEmail  = $request->request->get('email');
-        $password = $request->request->get('password');
-        $confirmPassword  = $request->request->get('confirmPassword');
+        $response = new JsonResponse();
 
-        if($userEmail && $password && $confirmPassword && ($password == $confirmPassword))
-        {
-            $userConfirmationService->addOneAdminUser($userEmail,$password);
+        try {
+            $userEmail  = $request->request->get('email');
+            $password = $request->request->get('password');
+            $confirmPassword  = $request->request->get('confirmPassword');
 
-            return new JsonResponse([],RESPONSE::HTTP_CREATED);
+            if ($userEmail && $password && $confirmPassword && ($password == $confirmPassword)) {
+                $userConfirmationService->addOneAdminUser($userEmail, $password);
+
+                $response->setData([]);
+                $response->setStatusCode(Response::HTTP_CREATED);
+
+            }else {
+                throw new \Exception("error with the password or the email");
+            }
+
+        } catch (\Exception $e) {
+            $response->setData(['detail' => $e->getMessage()]);
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
         }
-
-        return new JsonResponse(['message' =>'error with the password or the email.'],Response::HTTP_BAD_REQUEST);
+    return $response;
     }
 }

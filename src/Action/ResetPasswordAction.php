@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controller;
+namespace App\Action;
 
 use ApiPlatform\Core\Validator\ValidatorInterface;
+use App\Controller\ValidartorInterface;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
