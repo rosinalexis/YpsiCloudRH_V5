@@ -3,16 +3,22 @@
 namespace App\Email;
 
 use App\Entity\User;
+use ErrorException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Twig\Environment;
 use App\Entity\Contact;
-use DateTime;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\VarDumper\Cloner\Data;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+
 
 class Mailer
 {
+
+    private const EMAIL_SENDER = 'rh_dev_2022@ypsi.fr';
+
     /**
      * @var MailerInterface
      */
@@ -23,86 +29,82 @@ class Mailer
      */
     private Environment $twig;
 
+
+
     public function __construct(MailerInterface $mailer, Environment $twig)
     {
         $this->mailer = $mailer;
         $this->twig = $twig;
     }
 
-    public function sendConfirmationEmail(User $user)
+    private function buildEmailMessage(string $body, string $recipient, string $subject): Email
     {
-        $body = $this->twig->render('email/confirmation.html.twig', [
-            'user' => $user
-        ]);
-
-        $message = (new Email())
-            ->from('rh_dev_2022@ypsi.fr')
-            ->to("ypsi.cloud.rh@gmail.com")
-            ->subject('Votre compte Ypsi Cloud RH est en attente d\'activation !')
+        return (new Email())
+            ->from(self::EMAIL_SENDER)
+            ->to($recipient)
+            ->subject($subject)
             ->html($body, 'text\html');
-
-        $this->mailer->send($message);
     }
 
-    public function sendReceiptConfirmationMail(Contact $contact)
+    /**
+     * @param string $body
+     * @param string $recipient
+     * @param string $subject
+     * @throws ErrorException
+     */
+    private function sendEmail(string $body, string $recipient, string $subject): void
     {
-
-        $body = $this->twig->render('email/receipt_confirmation.html.twig');
-
-        $message = (new Email())
-            ->from('rh_dev_2022@ypsi.fr')
-            ->to("ypsi.cloud.rh@gmail.com")
-            ->subject("Accusé de réception de votre candidature")
-            ->html($body, 'text\html');
-
-        $this->mailer->send($message);
+        try {
+            $message = $this->buildEmailMessage($body,$recipient,$subject);
+            $this->mailer->send($message);
+        } catch (TransportExceptionInterface $e) {
+            throw new ErrorException(" Impossible d'envoyer l'email. \n detail:".$e->getMessage());
+        }
     }
 
-    public function sendMeetingMail()
+    /**
+     * @param User $user
+     * @throws ErrorException
+     */
+    public function sendConfirmationEmail(User $user): void
     {
-        $fs = new Filesystem();
-        $tmpFolder = '/tmp/';
-        $fileName = 'meeting.ics';
+        try {
+            $body = $this->twig->render('email/confirmation.html.twig', [
+                'user' => $user
+            ]);
 
-        $original_date = "2019-03-31";
+            $recipient = $user->getEmail();
 
-        $icsContent = "
-                        BEGIN:VCALENDAR
-                        VERSION:2.0
-                        CALSCALE:GREGORIAN
-                        METHOD:REQUEST
-                        BEGIN:VEVENT
-                        DTSTART:" . date('Ymd\THis', strtotime($original_date)) . "
-                        DTEND:" . date('Ymd\THis', strtotime($original_date)) . "
-                        DTSTAMP:" . date('Ymd\THis', strtotime($original_date)) . "
-                        ORGANIZER;CN=XYZ:mailto:do-not-reply@example.com
-                        UID:" . rand(5, 1500) . "
-                        ATTENDEE;PARTSTAT=NEEDS-ACTION;RSVP= TRUE;CN=Sample:emailaddress@testemail.com
-                        DESCRIPTION:" . "testman" . " requested Phone/Video Meeting Request
-                        LOCATION: Phone/Video
-                        SEQUENCE:0
-                        STATUS:CONFIRMED
-                        SUMMARY:Meeting has been scheduled by " . "testman" . "
-                        TRANSP:OPAQUE
-                        END:VEVENT
-                        END:VCALENDAR";
+            $subject = 'Votre compte Ypsi Cloud RH est en attente d\'activation !';
 
-        //creation of the file on the server
-        $icfFile = $fs->dumpFile($tmpFolder . $fileName, $icsContent);
+            $this->sendEmail($body, $recipient, $subject);
 
-        $body = 'Test meeting...';
-        $message = (new Email())
-            ->from('rh_dev_2022@ypsi.fr')
-            ->to("ypsi.cloud.rh@gmail.com")
-            ->subject("Rendez vous entretien")
-            ->text($body)
-            ->attachFromPath($tmpFolder . $fileName);
-        //->attachFromPath($file, null, 'text/calendar');
+        } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
+            throw new ErrorException("Impossible d'envoyer l'email de confirmation ");
+        }
 
-        $this->mailer->send($message);
-        $fs->remove(array('file', $tmpFolder, $fileName));
     }
 
+    /**
+     * @param Contact $contact
+     * @throws ErrorException
+     */
+    public function sendReceiptConfirmationMail(Contact $contact): void
+    {
+        try {
+            $body = $this->twig->render('email/receipt_confirmation.html.twig');
+
+            $recipient = $contact->getEmail();
+
+            $subject = "Accusé de réception de votre candidature";
+
+            $this->sendEmail($body, $recipient, $subject);
+
+        } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
+            throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéptio. \n detail : ". $e->getMessage());
+        }
+
+    }
 
     public function sendMeetingMailV2(Contact $contact)
     {
@@ -146,7 +148,7 @@ class Mailer
 
                     //traitement de l'object de l'email
                     $emailObject = $emailTrans["object"];
-                    $body = $this->twig->render('email/test_email.html.twig', ['emailTemplate' => $myEmailTemplate]);
+                    $body = $this->twig->render('email/base_modular_email.html.twig', ['emailTemplate' => $myEmailTemplate]);
                 }
             }
         }
@@ -161,45 +163,64 @@ class Mailer
         $this->mailer->send($message);
     }
 
-    public function sendMeetingMailV3(Contact $contact)
+    /**
+     * @throws ErrorException
+     */
+    public function sendMeetingMailV3(Contact $contact): void
     {
-        $today = date("d.m.y");
-        $emailObject = '';
+        try {
+            $today = date("d.m.y");
 
-        $email = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
+            $emailSubject = "Demande de date de rendez vous pour un entretien";
 
-        //l'email par defaut 
-        $body = $this->twig->render('email/receipt_confirmation.html.twig');
+            $emailTemplateList = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
 
-        if ($email) {
-            foreach ($email as $emailTrans) {
-                if (($emailTrans["title"] == "template accusé de réception") && $emailTrans["status"]) {
-                    //traitement du message remplacement par les valeurs
+            //l'email par defaut
+            $body = $this->twig->render('email/receipt_confirmation.html.twig');
 
-                    $myEmailTemplate = $emailTrans["htmlContent"];
+            $email = $this->getEmailTemplateIfActivated($emailTemplateList,"template accusé de réception");
 
-                    //recherche et remplacement de la variable user
-                    if (str_contains($myEmailTemplate, "%user%")) {
-                        $myEmailTemplate = str_replace("%user%",  $contact->getFullName(), $myEmailTemplate);
-                    }
+            if ($email) {
 
-                    if (str_contains($myEmailTemplate, "%date%")) {
-                        $myEmailTemplate = str_replace("%date%", $today, $myEmailTemplate);
-                    }
+                $emailSubject = $email["object"];
+                $emailTemplate = $email["htmlContent"];
 
-                    //traitement de l'object de l'email
-                    $emailObject = $emailTrans["object"];
+                $emailTemplate = $this->findAndReplaceVariable("%user%",$contact->getFullName(),$emailTemplate);
+                $emailTemplate = $this->findAndReplaceVariable("%date%",$today,$emailTemplate);
 
-                    $body = $this->twig->render('email/test_email.html.twig', ['emailTemplate' => $myEmailTemplate]);
+                $body = $this->twig->render('email/base_modular_email.html.twig', ['emailTemplate' => $emailTemplate]);
+            }
+
+            $this->sendEmail($body, $contact->getEmail(), $emailSubject);
+
+        } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
+            throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéptio. \n detail : ". $e->getMessage());
+        }
+
+    }
+
+    private function getEmailTemplateIfActivated( array $emailTemplateList,string  $templateTitle)
+    {
+
+        if($emailTemplateList){
+            foreach ($emailTemplateList as $email){
+                if (($email['title'] == $templateTitle) && $email["status"]){
+                   // $emailSubject = $email["object"];
+                    // $emailHtmlContent  = $email["htmlContent"];
+                    return $email;
                 }
             }
         }
-        $message = (new Email())
-            ->from('rh_dev_2022@ypsi.fr')
-            ->to("ypsi.cloud.rh@gmail.com")
-            ->subject($emailObject ? $emailObject : "Demande de date de rendez vous pour entretien")
-            ->html($body, 'text\html');
+    }
 
-        $this->mailer->send($message);
+    private function findAndReplaceVariable(string $variableToReplace, string $variableNewValue, mixed $template ): mixed
+    {
+        $newTemplate="";
+
+        if(str_contains($template, $variableToReplace)){
+           $newTemplate = str_replace($variableToReplace, $variableNewValue, $template);
+        }
+
+        return $newTemplate;
     }
 }
