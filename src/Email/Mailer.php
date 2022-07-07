@@ -101,66 +101,58 @@ class Mailer
             $this->sendEmail($body, $recipient, $subject);
 
         } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
-            throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéptio. \n detail : ". $e->getMessage());
+            throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéption. \n detail : ". $e->getMessage());
         }
 
     }
 
+    /**
+     * @throws ErrorException
+     */
     public function sendMeetingMailV2(Contact $contact)
     {
+        try {
         //l'email par defaut
         $body = $this->twig->render('email/date_confirmation.html.twig', ['contact' => $contact]);
 
-        $emailObject = '';
+        $emailSubject= "Demande de date de rendez vous pour entretien";
 
+        $templateTitle = "template de date";
 
         //check si un template email est activé
-        $email = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
+        $emailTemplateList = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
+
+        $email =  $this->getEmailTemplateIfActivated($emailTemplateList,$templateTitle);
+
         if ($email) {
-            foreach ($email as $emailTrans) {
-                if (($emailTrans["title"] == "template de date") && $emailTrans["status"]) {
+            $emailSubject = $email["object"];
+            $emailTemplate = $email["htmlContent"];
 
-                    //récuperation de la liste de date
-                    $userMeetingDate = $contact->getManagement()["contactAdministrationMeeting"]["proposedDates"];
-                    $lstDates = "";
+            //récuperation de la liste de date
+            $userMeetingDate = $contact->getManagement()["contactAdministrationMeeting"]["proposedDates"];
+            $lstDates = "";
 
-                    foreach ($userMeetingDate as $date) {
+            foreach ($userMeetingDate as $date) {
 
-                        $contactID = $contact->getId();
-                        $dateUID =  $date["uid"];
-                        $datePropostion = date_format(date_create($date["newDate"]), 'Y-m-d H:i:s');
-                        $dateTrans = "<a href=\"https://127.0.0.1:8000/validate/date/$contactID/$dateUID\"target=\"_blank\"> - $datePropostion </a> <br/>";
+                $contactID = $contact->getId();
+                $dateUID =  $date["uid"];
+                $datePropostion = date_format(date_create($date["newDate"]), 'Y-m-d H:i:s');
+                $dateTrans = "<a href=\"https://127.0.0.1:8000/validate/date/$contactID/$dateUID\"target=\"_blank\"> - $datePropostion </a> <br/>";
 
-                        $lstDates = $lstDates . " " . $dateTrans;
-                    }
-
-                    //traitement du message remplacement par les valeurs
-                    $myEmailTemplate = $emailTrans["htmlContent"];
-
-                    //recherche et remplacement de la variable user
-                    if (str_contains($myEmailTemplate, "%user%")) {
-                        $myEmailTemplate = str_replace("%user%",  $contact->getFullName(), $myEmailTemplate);
-                    }
-
-                    if (str_contains($myEmailTemplate, "%date%")) {
-                        $myEmailTemplate = str_replace("%date%",  $lstDates, $myEmailTemplate);
-                    }
-
-                    //traitement de l'object de l'email
-                    $emailObject = $emailTrans["object"];
-                    $body = $this->twig->render('email/base_modular_email.html.twig', ['emailTemplate' => $myEmailTemplate]);
-                }
+                $lstDates = $lstDates . " " . $dateTrans;
             }
+
+            $emailTemplate = $this->findAndReplaceVariable("%user%",$contact->getFullName(),$emailTemplate);
+            $emailTemplate = $this->findAndReplaceVariable("%date%", $lstDates,$emailTemplate);
+
+            $body = $this->twig->render('email/base_modular_email.html.twig', ['emailTemplate' => $emailTemplate]);
         }
+            $this->sendEmail($body, $contact->getEmail(), $emailSubject);
 
+        } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
 
-        $message = (new Email())
-            ->from('rh_dev_2022@ypsi.fr')
-            ->to("ypsi.cloud.rh@gmail.com")
-            ->subject($emailObject ? $emailObject : "Demande de date de rendez vous pour entretien")
-            ->html($body, 'text\html');
-
-        $this->mailer->send($message);
+            throw new ErrorException("Impossible d'envoyer l'email de demande de rendez-vous. \n detail : ". $e->getMessage());
+        }
     }
 
     /**
@@ -173,12 +165,13 @@ class Mailer
 
             $emailSubject = "Demande de date de rendez vous pour un entretien";
 
+            $templateTitle = "template accusé de réception";
+
             $emailTemplateList = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
 
-            //l'email par defaut
             $body = $this->twig->render('email/receipt_confirmation.html.twig');
 
-            $email = $this->getEmailTemplateIfActivated($emailTemplateList,"template accusé de réception");
+            $email = $this->getEmailTemplateIfActivated($emailTemplateList,$templateTitle);
 
             if ($email) {
 
@@ -194,7 +187,7 @@ class Mailer
             $this->sendEmail($body, $contact->getEmail(), $emailSubject);
 
         } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
-            throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéptio. \n detail : ". $e->getMessage());
+            throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéption. \n detail : ". $e->getMessage());
         }
 
     }
