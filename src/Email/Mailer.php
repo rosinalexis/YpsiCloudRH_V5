@@ -62,54 +62,12 @@ class Mailer
         }
     }
 
-    /**
-     * @param User $user
-     * @throws ErrorException
-     */
-    public function sendConfirmationEmail(User $user): void
-    {
-        try {
-            $body = $this->twig->render('email/confirmation.html.twig', [
-                'user' => $user
-            ]);
-
-            $recipient = $user->getEmail();
-
-            $subject = 'Votre compte Ypsi Cloud RH est en attente d\'activation !';
-
-            $this->sendEmail($body, $recipient, $subject);
-
-        } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
-            throw new ErrorException("Impossible d'envoyer l'email de confirmation ");
-        }
-
-    }
 
     /**
      * @param Contact $contact
      * @throws ErrorException
      */
-    public function sendReceiptConfirmationMail(Contact $contact): void
-    {
-        try {
-            $body = $this->twig->render('email/receipt_confirmation.html.twig');
-
-            $recipient = $contact->getEmail();
-
-            $subject = "Accusé de réception de votre candidature";
-
-            $this->sendEmail($body, $recipient, $subject);
-
-        } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
-            throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéption. \n detail : ". $e->getMessage());
-        }
-
-    }
-
-    /**
-     * @throws ErrorException
-     */
-    public function sendMeetingMailV2(Contact $contact)
+    public function sendMeetingMail(Contact $contact): void
     {
         try {
         //l'email par defaut
@@ -156,9 +114,10 @@ class Mailer
     }
 
     /**
+     * @param Contact $contact
      * @throws ErrorException
      */
-    public function sendMeetingMailV3(Contact $contact): void
+    public function sendReceiptConfirmationEmail(Contact $contact): void
     {
         try {
             $today = date("d.m.y");
@@ -169,7 +128,7 @@ class Mailer
 
             $emailTemplateList = $contact->getJobReference()->getEstablishment()->getSetting()['emailTemplate'];
 
-            $body = $this->twig->render('email/receipt_confirmation.html.twig');
+            $body = $this->twig->render('email/default_receipt_confirmation.html.twig');
 
             $email = $this->getEmailTemplateIfActivated($emailTemplateList,$templateTitle);
 
@@ -198,12 +157,12 @@ class Mailer
         if($emailTemplateList){
             foreach ($emailTemplateList as $email){
                 if (($email['title'] == $templateTitle) && $email["status"]){
-                   // $emailSubject = $email["object"];
-                    // $emailHtmlContent  = $email["htmlContent"];
                     return $email;
                 }
             }
         }
+
+        return false;
     }
 
     private function findAndReplaceVariable(string $variableToReplace, string $variableNewValue, mixed $template ): mixed

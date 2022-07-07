@@ -60,7 +60,7 @@ class HomeController extends AbstractController
     #[Route("api/meeting/email/{id}", name: "default_meeting_email")]
     public function sendMeetingDatesToContact(Contact $contact, Mailer $mailer): JsonResponse
     {
-        $mailer->sendMeetingMailV2($contact);
+        $mailer->sendMeetingMail($contact);
 
         return new JsonResponse([
             "email" => "is send"

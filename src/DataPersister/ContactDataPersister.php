@@ -78,8 +78,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
                 && !$data->getManagement()["receiptConfirmation"]["isDone"]
             ) {
                 //envoyer le mail
-                $this->_mailer->sendReceiptConfirmationMail($data);
-                //$this->_mailer->sendMeetingMailV3($data);
+                $this->_mailer->sendReceiptConfirmationEmail($data);
 
                 //reset du management
                 $management = $data->getManagement();
@@ -94,7 +93,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
                 && $data->getManagement()["contactAdministrationMeeting"]["sendEmailOk"]
                 && !$data->getManagement()["contactAdministrationMeeting"]["isDone"]
             ) {
-                $this->_mailer->sendMeetingMailV2($data);
+                $this->_mailer->sendMeetingMail($data);
 
                 //reset du management
                 $management = $data->getManagement();
