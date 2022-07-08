@@ -53,6 +53,7 @@ final class EstablishmentDataPersister implements ContextAwareDataPersisterInter
 
             $data->setSetting($configuration);
         }
+
         $this->_em->persist($data);
         $this->_em->flush();
 

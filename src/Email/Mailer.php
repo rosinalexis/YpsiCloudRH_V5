@@ -18,6 +18,7 @@ class Mailer
 {
 
     private const EMAIL_SENDER = 'rh_dev_2022@ypsi.fr';
+    private const FRONT_SERVEUR_ADDRESS ='https://127.0.0.1:8000';
 
     /**
      * @var MailerInterface
@@ -37,29 +38,26 @@ class Mailer
         $this->twig = $twig;
     }
 
-    private function buildEmailMessage(string $body, string $recipient, string $subject): Email
-    {
-        return (new Email())
-            ->from(self::EMAIL_SENDER)
-            ->to($recipient)
-            ->subject($subject)
-            ->html($body, 'text\html');
-    }
 
     /**
-     * @param string $body
-     * @param string $recipient
-     * @param string $subject
+     * @param User $user
      * @throws ErrorException
      */
-    private function sendEmail(string $body, string $recipient, string $subject): void
+    public function sendAccountConfirmationEmail(User $user): void
     {
         try {
-            $message = $this->buildEmailMessage($body,$recipient,$subject);
-            $this->mailer->send($message);
-        } catch (TransportExceptionInterface $e) {
-            throw new ErrorException(" Impossible d'envoyer l'email. \n detail:".$e->getMessage());
+            $body = $this->twig->render('email/default_account_confirmation.html.twig');
+
+            $recipient = $user->getEmail();
+
+            $subject = "Demande de confirmation de compte";
+
+            $this->sendEmail($body, $recipient, $subject);
+
+        } catch (ErrorException|LoaderError|RuntimeError|SyntaxError $e) {
+            throw new ErrorException("Impossible d'envoyer l'email de demande de confirmation de compte. \n detail : ". $e->getMessage());
         }
+
     }
 
 
@@ -71,7 +69,7 @@ class Mailer
     {
         try {
         //l'email par defaut
-        $body = $this->twig->render('email/date_confirmation.html.twig', ['contact' => $contact]);
+        $body = $this->twig->render('email/default_date_confirmation.html.twig', ['contact' => $contact]);
 
         $emailSubject= "Demande de date de rendez vous pour entretien";
 
@@ -149,6 +147,31 @@ class Mailer
             throw new ErrorException("Impossible d'envoyer l'email de l'accusé de récéption. \n detail : ". $e->getMessage());
         }
 
+    }
+
+    private function buildEmailMessage(string $body, string $to, string $subject): Email
+    {
+        return (new Email())
+            ->from(self::EMAIL_SENDER)
+            ->to($to)
+            ->subject($subject)
+            ->html($body, 'text\html');
+    }
+
+    /**
+     * @param string $body
+     * @param string $to
+     * @param string $subject
+     * @throws ErrorException
+     */
+    private function sendEmail(string $body, string $to, string $subject): void
+    {
+        try {
+            $message = $this->buildEmailMessage($body,$to,$subject);
+            $this->mailer->send($message);
+        } catch (TransportExceptionInterface $e) {
+            throw new ErrorException(" Impossible d'envoyer l'email. \n detail:".$e->getMessage());
+        }
     }
 
     private function getEmailTemplateIfActivated( array $emailTemplateList,string  $templateTitle)

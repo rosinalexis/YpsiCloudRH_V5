@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Email\Mailer;
 use App\Security\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use ErrorException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -40,6 +41,9 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     }
 
 
+    /**
+     * @throws ErrorException
+     */
     public function persist($data, array $context = [])
     {
 
@@ -64,7 +68,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
                 $this->_tokeGenerator->getRandomeSecureToken()
             );
 
-            $this->_mailer->sendConfirmationEmail($data);
+            $this->_mailer->sendAccountConfirmationEmail($data);
         }
 
         if ($data instanceof User && (($context['item_operation_name'] ?? null) === 'put')) {
