@@ -127,8 +127,11 @@ class HomeController extends AbstractController
             }
 
         } catch (\Exception $e) {
-            $response->setData(['detail' => $e->getMessage()]);
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setData([
+                'status' => Response::HTTP_CONFLICT,
+                'detail' => $e->getMessage()
+            ]);
+            $response->setStatusCode(Response::HTTP_CONFLICT);
         }
     return $response;
     }
